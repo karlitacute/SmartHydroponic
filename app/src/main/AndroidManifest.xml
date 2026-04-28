@@ -12,7 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartHydroponic">
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".WelcomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
