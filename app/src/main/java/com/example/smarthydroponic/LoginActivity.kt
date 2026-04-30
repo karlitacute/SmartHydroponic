@@ -44,13 +44,26 @@ class LoginActivity : AppCompatActivity() {
         try {
             val account = task.getResult(ApiException::class.java)
 
+            val name = account.displayName
             val email = account.email
+            val photo = account.photoUrl?.toString()
+
+            // ✅ SIMPAN DATA
+            val sharedPreferences = getSharedPreferences("USER_DATA", MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+
+            editor.putString("NAME", name)
+            editor.putString("EMAIL", email)
+            editor.putString("PHOTO", photo)
+            editor.apply()
 
             Toast.makeText(this, "Login berhasil: $email", Toast.LENGTH_SHORT).show()
 
+            startActivity(Intent(this, HomeActivity::class.java))
+            finish()
 
         } catch (e: ApiException) {
             Toast.makeText(this, "Login gagal", Toast.LENGTH_SHORT).show()
         }
     }
-}
+    }

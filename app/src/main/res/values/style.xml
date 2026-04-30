@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- BASE STYLE -->
+    <style name="TimeButton">
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+    </style>
+
+    <!-- ACTIVE (HIJAU) -->
+    <style name="TimeButton.Active" parent="TimeButton">
+        <item name="android:background">@drawable/bg_time_active</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <!-- INACTIVE (ABU) -->
+    <style name="TimeButton.Inactive" parent="TimeButton">
+        <item name="android:background">@drawable/bg_time_inactive</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+</resources>

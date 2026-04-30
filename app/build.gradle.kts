@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
 
-    // TAMBAHAN WAJIB
     id("com.google.gms.google-services")
 }
 
@@ -24,6 +23,9 @@ android {
         release {
             isMinifyEnabled = false
         }
+        buildFeatures {
+            viewBinding = true
+        }
     }
 
     compileOptions {
@@ -44,8 +46,9 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
-    // 🔥 TAMBAHAN GOOGLE LOGIN
     implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.android.material:material:1.11.0")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
