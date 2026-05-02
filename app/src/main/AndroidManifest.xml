@@ -18,7 +18,7 @@
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".SettingActivity"
+            android:name=".ChartActivity"
             android:exported="false" />
         <activity
             android:name=".HomeActivity"
@@ -30,7 +30,7 @@
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".ChartActivity"
+            android:name=".SettingActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
