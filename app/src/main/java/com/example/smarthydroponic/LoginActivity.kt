@@ -39,7 +39,6 @@ class LoginActivity : AppCompatActivity() {
             handleSignInResult(task)
         }
     }
-
     private fun handleSignInResult(task: Task<GoogleSignInAccount>) {
         try {
             val account = task.getResult(ApiException::class.java)
@@ -65,4 +64,4 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this, "Login gagal", Toast.LENGTH_SHORT).show()
         }
     }
-    }
+}

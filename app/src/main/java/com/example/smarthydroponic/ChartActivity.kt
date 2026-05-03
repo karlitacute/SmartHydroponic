@@ -21,7 +21,6 @@ class ChartActivity : AppCompatActivity() {
         setupChart()
         loadDummyData()
     }
-
     private fun setupChart() {
         val description = Description()
         description.text = "Monitoring Nutrisi"
@@ -35,7 +34,6 @@ class ChartActivity : AppCompatActivity() {
 
         lineChart.animateX(1000)
     }
-
     private fun loadDummyData() {
         val entries = ArrayList<Entry>()
 
@@ -55,6 +53,6 @@ class ChartActivity : AppCompatActivity() {
         val lineData = LineData(dataSet)
         lineChart.data = lineData
 
-        lineChart.invalidate() // refresh chart
+        lineChart.invalidate()
     }
 }
