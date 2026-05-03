@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="14dp"
-    android:padding="16dp"
+    android:layout_height="60dp"
+    android:layout_marginBottom="10dp"
+    android:padding="12dp"
     android:gravity="center_vertical"
     android:background="@drawable/bg_setting_item"
     android:clickable="true"
@@ -12,13 +12,13 @@
     android:foreground="?attr/selectableItemBackground">
 
     <ImageView
-        android:id="@+id/iconitemSchedule"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:id="@+id/iconSchedule"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:src="@drawable/time"/>
 
     <LinearLayout
-        android:layout_marginStart="14dp"
+        android:layout_marginStart="10dp"
         android:layout_weight="1"
         android:orientation="vertical"
         android:layout_width="0dp"
@@ -29,7 +29,7 @@
             android:text="Pump Schedule"
             android:textStyle="bold"
             android:textColor="@color/black"
-            android:textSize="12sp"
+            android:textSize="13sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
@@ -37,15 +37,14 @@
             android:id="@+id/descSetting"
             android:text="Set the pump light schedule"
             android:textColor="@color/black"
-            android:textSize="12sp"
-            android:textStyle="normal"
+            android:textSize="11sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <ImageView
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:src="@drawable/arroww"/>>
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:src="@drawable/arroww"/>
 
 </LinearLayout>

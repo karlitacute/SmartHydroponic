@@ -23,27 +23,22 @@ class ChartActivity : AppCompatActivity() {
     }
 
     private fun setupChart() {
-        // Deskripsi chart
         val description = Description()
         description.text = "Monitoring Nutrisi"
         lineChart.description = description
 
-        // Disable grid kanan
         lineChart.axisRight.isEnabled = false
 
-        // X Axis di bawah
         val xAxis = lineChart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.setDrawGridLines(false)
 
-        // Animasi
         lineChart.animateX(1000)
     }
 
     private fun loadDummyData() {
         val entries = ArrayList<Entry>()
 
-        // Data contoh (misalnya pH / nutrisi)
         entries.add(Entry(1f, 5f))
         entries.add(Entry(2f, 6f))
         entries.add(Entry(3f, 5.5f))

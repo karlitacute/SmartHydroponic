@@ -48,7 +48,6 @@ class LoginActivity : AppCompatActivity() {
             val email = account.email
             val photo = account.photoUrl?.toString()
 
-            // SIMPAN DATA
             val sharedPreferences = getSharedPreferences("USER_DATA", MODE_PRIVATE)
             val editor = sharedPreferences.edit()
 
