@@ -3,6 +3,7 @@ package com.example.smarthydroponic
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -11,41 +12,40 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class SettingActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_setting)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
+        val imgProfile = findViewById<ImageView>(R.id.imgProfile)
+
+        imgProfile.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+        }
+
         val itemPump = findViewById<View>(R.id.itemPump)
         val itemSchedule = findViewById<View>(R.id.itemSchedule)
         val itemNotif = findViewById<View>(R.id.itemNotif)
-        val itemSensor = findViewById<View>(R.id.itemSensor)
-        val itemWifi = findViewById<View>(R.id.itemWifi)
         val itemLogout = findViewById<View>(R.id.itemLogout)
 
         itemPump.setOnClickListener {
-            Toast.makeText(this, "Pump Control", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, PumpControlActivity::class.java))
         }
 
         itemSchedule.setOnClickListener {
-            Toast.makeText(this, "Schedule", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, PumpScheduleActivity::class.java))
         }
 
         itemNotif.setOnClickListener {
-            Toast.makeText(this, "Notification", Toast.LENGTH_SHORT).show()
-        }
-
-        itemSensor.setOnClickListener {
-            Toast.makeText(this, "Sensor Setting", Toast.LENGTH_SHORT).show()
-        }
-
-        itemWifi.setOnClickListener {
-            Toast.makeText(this, "WiFi Setting", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, NotificationActivity::class.java))
         }
 
         itemLogout.setOnClickListener {
@@ -57,7 +57,6 @@ class SettingActivity : AppCompatActivity() {
 
     private fun logoutUser() {
         Toast.makeText(this, "Logout berhasil", Toast.LENGTH_SHORT).show()
-
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }

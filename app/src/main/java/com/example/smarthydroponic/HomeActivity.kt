@@ -13,8 +13,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.net.Network
 import android.net.ConnectivityManager.NetworkCallback
-
 import android.content.Intent
+import android.widget.ImageView
 
 class HomeActivity : AppCompatActivity() {
 
@@ -33,6 +33,10 @@ class HomeActivity : AppCompatActivity() {
             insets
         }
 
+        val imgProfile = findViewById<ImageView>(R.id.imgProfile)
+        imgProfile.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
         val tvTemp = findViewById<TextView>(R.id.tvTemperature)
         val tvPH = findViewById<TextView>(R.id.tvPH)
         val tvTDS = findViewById<TextView>(R.id.tvTDS)
@@ -70,7 +74,6 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
-        // REALTIME INTERNET LISTENER
         connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         networkCallback = object : NetworkCallback() {
@@ -98,7 +101,6 @@ class HomeActivity : AppCompatActivity() {
 
         connectivityManager.registerDefaultNetworkCallback(networkCallback)
 
-        // SWITCH PUMP
         switchPump.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 tvPumpStatus.text = "ON"
@@ -109,7 +111,6 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
-        // MONITORING AUTO
         handler = Handler(Looper.getMainLooper())
 
         handler.post(object : Runnable {
@@ -125,7 +126,6 @@ class HomeActivity : AppCompatActivity() {
                 tvTDS.text = "$tds ppm"
                 tvUV.text = uv.toString()
 
-                // STATUS SYSTEM
                 if (temp in 25..30 && ph in 6..7) {
                     tvSensor.text = "Normal"
                     tvSensor.setTextColor(getColor(R.color.green))

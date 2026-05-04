@@ -15,6 +15,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartHydroponic">
         <activity
+            android:name=".LogoutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ConnectionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SensorCalibrationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".NotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PumpScheduleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PumpControlActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity

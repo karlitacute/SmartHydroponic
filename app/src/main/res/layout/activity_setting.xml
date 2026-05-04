@@ -31,10 +31,13 @@
             android:layout_marginStart="16dp"/>
 
         <ImageView
+            android:id="@+id/imgProfile"
             android:src="@drawable/ic_profile"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:layout_marginEnd="16dp"/>
+            android:layout_marginEnd="16dp"
+            android:clickable="true"
+            android:focusable="true"/>
     </LinearLayout>
 
     <ScrollView
@@ -67,14 +70,6 @@
             <include
                 android:id="@+id/itemNotif"
                 layout="@layout/item_notif"/>
-
-            <include
-                android:id="@+id/itemSensor"
-                layout="@layout/item_sensor"/>
-
-            <include
-                android:id="@+id/itemWifi"
-                layout="@layout/item_wifi"/>
 
             <include
                 android:id="@+id/itemLogout"
