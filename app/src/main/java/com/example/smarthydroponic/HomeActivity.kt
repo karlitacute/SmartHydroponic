@@ -17,7 +17,6 @@ import android.content.Intent
 import android.widget.ImageView
 
 class HomeActivity : AppCompatActivity() {
-
     private lateinit var handler: Handler
     private lateinit var connectivityManager: ConnectivityManager
     private lateinit var networkCallback: NetworkCallback
@@ -37,6 +36,10 @@ class HomeActivity : AppCompatActivity() {
         imgProfile.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
+
+        val imgWifi = findViewById<ImageView>(R.id.imgWifi)
+        val tvSystemDesc = findViewById<TextView>(R.id.tvSystemDesc)
+
         val tvTemp = findViewById<TextView>(R.id.tvTemperature)
         val tvPH = findViewById<TextView>(R.id.tvPH)
         val tvTDS = findViewById<TextView>(R.id.tvTDS)
@@ -51,9 +54,7 @@ class HomeActivity : AppCompatActivity() {
         val tvWifiTop = findViewById<TextView>(R.id.tvStatusAtas)
 
         val bottomNav = findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavigation)
-
         bottomNav.selectedItemId = R.id.nav_home
-
         bottomNav.setOnItemSelectedListener {
 
             when (it.itemId) {
@@ -80,21 +81,29 @@ class HomeActivity : AppCompatActivity() {
 
             override fun onAvailable(network: Network) {
                 runOnUiThread {
+
                     tvInternet.text = "Online"
                     tvInternet.setTextColor(getColor(R.color.green))
 
                     tvWifiTop.text = "Online"
                     tvWifiTop.setBackgroundResource(R.drawable.btn_online)
+
+                    imgWifi.setImageResource(R.drawable.wifi)
+                    tvSystemDesc.text = "The system runs normally"
                 }
             }
 
             override fun onLost(network: Network) {
                 runOnUiThread {
+
                     tvInternet.text = "Offline"
                     tvInternet.setTextColor(getColor(R.color.brightred))
 
                     tvWifiTop.text = "Offline"
                     tvWifiTop.setBackgroundResource(R.drawable.btn_offline)
+
+                    imgWifi.setImageResource(R.drawable.ic_wifioff)
+                    tvSystemDesc.text = "No internet connection"
                 }
             }
         }
@@ -138,7 +147,6 @@ class HomeActivity : AppCompatActivity() {
             }
         })
     }
-
     override fun onDestroy() {
         super.onDestroy()
         connectivityManager.unregisterNetworkCallback(networkCallback)

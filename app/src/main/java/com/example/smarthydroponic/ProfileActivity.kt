@@ -2,6 +2,7 @@ package com.example.smarthydroponic
 
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -23,15 +24,38 @@ class ProfileActivity : AppCompatActivity() {
             insets
         }
 
+        val btnBack = findViewById<ImageView>(R.id.btnBack)
+
+        btnBack.setOnClickListener {
+            finish()
+        }
+
         val sp = getSharedPreferences("USER_DATA", MODE_PRIVATE)
 
         val name = sp.getString("NAME", "")
         val email = sp.getString("EMAIL", "")
         val photo = sp.getString("PHOTO", "")
 
-        val tvName = findViewById<TextView>(R.id.tvName)
-        val tvEmail = findViewById<TextView>(R.id.tvEmail)
-        val imgProfile = findViewById<ImageView>(R.id.imgProfile)
+        val profileCard = findViewById<LinearLayout>(R.id.profileCard)
+        val nameCard = findViewById<LinearLayout>(R.id.nameCard)
+        val emailCard = findViewById<LinearLayout>(R.id.emailCard)
+
+        val imgProfile = profileCard.getChildAt(0) as ImageView
+
+        val tvNameProfile = (profileCard.getChildAt(1) as LinearLayout)
+            .getChildAt(0) as TextView
+
+        val tvEmailProfile = (profileCard.getChildAt(1) as LinearLayout)
+            .getChildAt(1) as TextView
+
+        val tvName = (nameCard.getChildAt(1) as LinearLayout)
+            .getChildAt(1) as TextView
+
+        val tvEmail = (emailCard.getChildAt(1) as LinearLayout)
+            .getChildAt(1) as TextView
+
+        tvNameProfile.text = name
+        tvEmailProfile.text = email
 
         tvName.text = name
         tvEmail.text = email

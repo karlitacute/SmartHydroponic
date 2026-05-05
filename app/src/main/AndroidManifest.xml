@@ -42,13 +42,13 @@
             android:name=".HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".WelcomeActivity"
+            android:name=".SettingActivity"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".SettingActivity"
+            android:name=".WelcomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

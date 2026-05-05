@@ -90,10 +90,12 @@
 
             <ImageView
                 android:id="@+id/btnEye"
-                android:src="@drawable/ic_mata"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginStart="10dp"/>
+                android:src="@drawable/ic_mata"
+                android:layout_marginStart="10dp"
+                android:clickable="true"
+                android:focusable="true"/>
         </LinearLayout>
 
         <Button
@@ -144,7 +146,7 @@
             android:background="@drawable/btn_outline"
             android:padding="12dp"
             android:layout_width="match_parent"
-            android:layout_height="55dp">
+            android:layout_height="50dp">
 
             <ImageView
                 android:src="@drawable/ic_google"
@@ -153,13 +155,12 @@
                 android:layout_marginEnd="10dp"/>
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:text="Continue with Google"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sign in with Google"
                 android:textColor="@color/black"
                 android:textSize="12sp"/>
 
         </LinearLayout>
-
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
