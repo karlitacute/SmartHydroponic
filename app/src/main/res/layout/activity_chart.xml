@@ -10,7 +10,7 @@
     <LinearLayout
         android:id="@+id/headerChart"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="10dp"
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Monitoring Chart"
-            android:textSize="22sp"
+            android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@color/black"
             android:layout_marginStart="16dp"/>
@@ -60,14 +60,13 @@
 
             <LinearLayout
                 android:gravity="center_vertical"
-                android:layout_marginTop="0dp"
+                android:layout_marginTop="5dp"
                 android:orientation="horizontal"
                 android:background="@drawable/bg_filter_container"
                 android:padding="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="55dp">
 
-                <!-- TEMP -->
                 <LinearLayout
                     android:id="@+id/btnTemp"
                     android:orientation="horizontal"
@@ -93,7 +92,6 @@
                         android:layout_height="wrap_content"/>
                 </LinearLayout>
 
-                <!-- PH -->
                 <LinearLayout
                     android:id="@+id/btnPH"
                     android:orientation="horizontal"
@@ -119,7 +117,6 @@
                         android:layout_height="wrap_content"/>
                 </LinearLayout>
 
-                <!-- TDS -->
                 <LinearLayout
                     android:id="@+id/btnTDS"
                     android:orientation="horizontal"
@@ -145,7 +142,6 @@
                         android:layout_height="wrap_content"/>
                 </LinearLayout>
 
-                <!-- UV -->
                 <LinearLayout
                     android:id="@+id/btnUV"
                     android:orientation="horizontal"
@@ -183,6 +179,7 @@
                     style="@style/TimeButton.Active"
                     android:id="@+id/btn1H"
                     android:text="1 Jam"
+                    android:textSize="12sp"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
                     android:layout_width="0dp"
@@ -192,6 +189,7 @@
                     style="@style/TimeButton.Inactive"
                     android:id="@+id/btn6H"
                     android:text="6 Jam"
+                    android:textSize="12sp"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
                     android:layout_width="0dp"
@@ -201,6 +199,7 @@
                     style="@style/TimeButton.Inactive"
                     android:id="@+id/btn12H"
                     android:text="12 Jam"
+                    android:textSize="12sp"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
                     android:layout_width="0dp"
@@ -210,6 +209,7 @@
                     style="@style/TimeButton.Inactive"
                     android:id="@+id/btn1D"
                     android:text="1 Hari"
+                    android:textSize="12sp"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
                     android:layout_width="0dp"
@@ -219,6 +219,7 @@
                     style="@style/TimeButton.Inactive"
                     android:id="@+id/btn7D"
                     android:text="7 Hari"
+                    android:textSize="12sp"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
                     android:layout_width="0dp"
@@ -233,7 +234,7 @@
                 android:textStyle="bold"
                 android:textSize="14sp"
                 android:textColor="@color/black"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
@@ -241,19 +242,19 @@
                 android:id="@+id/lineChart"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:layout_marginTop="8dp"/>
+                android:layout_marginTop="15dp"/>
 
             <TextView
                 android:text="Pump Control"
                 android:textStyle="bold"
                 android:textSize="14sp"
                 android:textColor="@color/black"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <LinearLayout
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="15dp"
                 android:padding="16dp"
                 android:orientation="horizontal"
                 android:background="@drawable/bg_summary"
@@ -309,6 +310,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="28.2 °c"
+                        android:textSize="12sp"
                         android:textColor="@color/black"
                         android:textStyle="bold"/>
                     <TextView
@@ -339,6 +341,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="31.0 °c"
+                        android:textSize="12sp"
                         android:textColor="@color/black"
                         android:textStyle="bold"/>
                     <TextView
@@ -357,13 +360,13 @@
                 android:textStyle="bold"
                 android:textSize="14sp"
                 android:textColor="@color/black"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="15dp"
                 android:padding="12dp"
                 android:background="@drawable/bg_history"
                 android:layout_width="match_parent"

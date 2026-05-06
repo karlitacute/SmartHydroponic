@@ -41,7 +41,7 @@
     <LinearLayout
         android:id="@+id/waterPump"
         android:layout_width="0dp"
-        android:layout_height="70dp"
+        android:layout_height="80dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="12dp"
@@ -84,7 +84,7 @@
     <LinearLayout
         android:id="@+id/nutritionPump"
         android:layout_width="0dp"
-        android:layout_height="70dp"
+        android:layout_height="80dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="12dp"

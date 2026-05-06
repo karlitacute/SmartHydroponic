@@ -11,6 +11,9 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.Description
 import android.widget.TextView
 import android.widget.LinearLayout
+import com.github.mikephil.charting.formatter.ValueFormatter
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ChartActivity : AppCompatActivity() {
 

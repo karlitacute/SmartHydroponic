@@ -17,9 +17,11 @@ import android.content.Intent
 import android.widget.ImageView
 
 class HomeActivity : AppCompatActivity() {
+
     private lateinit var handler: Handler
     private lateinit var connectivityManager: ConnectivityManager
     private lateinit var networkCallback: NetworkCallback
+    private var isConnected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +84,8 @@ class HomeActivity : AppCompatActivity() {
             override fun onAvailable(network: Network) {
                 runOnUiThread {
 
+                    isConnected = true
+
                     tvInternet.text = "Online"
                     tvInternet.setTextColor(getColor(R.color.green))
 
@@ -95,6 +99,8 @@ class HomeActivity : AppCompatActivity() {
 
             override fun onLost(network: Network) {
                 runOnUiThread {
+
+                    isConnected = false
 
                     tvInternet.text = "Offline"
                     tvInternet.setTextColor(getColor(R.color.brightred))
@@ -114,9 +120,11 @@ class HomeActivity : AppCompatActivity() {
             if (isChecked) {
                 tvPumpStatus.text = "ON"
                 tvWater.text = "Running"
+                tvWater.setTextColor(getColor(R.color.green))
             } else {
                 tvPumpStatus.text = "OFF"
                 tvWater.text = "Stopped"
+                tvWater.setTextColor(getColor(R.color.brightred))
             }
         }
 
@@ -125,28 +133,32 @@ class HomeActivity : AppCompatActivity() {
         handler.post(object : Runnable {
             override fun run() {
 
-                val temp = (25..32).random()
-                val ph = (5..8).random()
-                val tds = (600..900).random()
-                val uv = (1..5).random()
+                if (isConnected) {
 
-                tvTemp.text = "$temp°C"
-                tvPH.text = ph.toString()
-                tvTDS.text = "$tds ppm"
-                tvUV.text = uv.toString()
+                    val temp = (25..32).random()
+                    val ph = (5..8).random()
+                    val tds = (600..900).random()
+                    val uv = (1..5).random()
 
-                if (temp in 25..30 && ph in 6..7) {
-                    tvSensor.text = "Normal"
-                    tvSensor.setTextColor(getColor(R.color.green))
-                } else {
-                    tvSensor.text = "Warning"
-                    tvSensor.setTextColor(getColor(R.color.brightred))
+                    tvTemp.text = "$temp°C"
+                    tvPH.text = ph.toString()
+                    tvTDS.text = "$tds ppm"
+                    tvUV.text = uv.toString()
+
+                    if (temp in 25..30 && ph in 6..7) {
+                        tvSensor.text = "Normal"
+                        tvSensor.setTextColor(getColor(R.color.green))
+                    } else {
+                        tvSensor.text = "Warning"
+                        tvSensor.setTextColor(getColor(R.color.brightred))
+                    }
                 }
 
-                handler.postDelayed(this, 3000)
+                handler.postDelayed(this, 3000) // tetap looping
             }
         })
     }
+
     override fun onDestroy() {
         super.onDestroy()
         connectivityManager.unregisterNetworkCallback(networkCallback)
