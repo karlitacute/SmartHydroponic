@@ -51,8 +51,6 @@ class SettingActivity : AppCompatActivity() {
         itemLogout.setOnClickListener {
             logoutUser()
         }
-
-        setupBottomNav()
     }
 
     private fun logoutUser() {
@@ -61,22 +59,4 @@ class SettingActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun setupBottomNav() {
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
-
-        bottomNav.setOnItemSelectedListener {
-            when (it.itemId) {
-                R.id.nav_home -> {
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    true
-                }
-                R.id.nav_chart -> {
-                    startActivity(Intent(this, ChartActivity::class.java))
-                    true
-                }
-                R.id.nav_setting -> true
-                else -> false
-            }
-        }
-    }
 }

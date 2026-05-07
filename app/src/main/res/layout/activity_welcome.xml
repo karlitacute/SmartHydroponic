@@ -7,18 +7,19 @@
     tools:context=".WelcomeActivity">
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:background="@drawable/login"
-        android:gravity="center"
+        android:gravity="center_horizontal"
         android:padding="24dp"
+        android:paddingBottom="80dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <ImageView
             android:src="@drawable/logodaun"
             android:layout_width="75dp"
-            android:layout_height="75dp"/>
+            android:layout_height="75dp"
+            android:layout_marginTop="230dp"/>
 
         <TextView
             android:layout_width="224dp"

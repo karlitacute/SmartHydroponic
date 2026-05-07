@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/main"
     android:background="@color/verylightcoolgray"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    tools:context=".ChartActivity">
 
     <LinearLayout
         android:id="@+id/headerChart"
@@ -58,116 +60,122 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <LinearLayout
-                android:gravity="center_vertical"
+            <HorizontalScrollView
                 android:layout_marginTop="5dp"
-                android:orientation="horizontal"
-                android:background="@drawable/bg_filter_container"
-                android:padding="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="55dp">
+                android:layout_height="55dp"
+                android:scrollbars="none">
 
                 <LinearLayout
-                    android:id="@+id/btnTemp"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:gravity="center"
-                    android:padding="6dp"
-                    android:background="@drawable/bg_filter_active"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/bg_filter_container"
+                    android:padding="5dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent">
 
-                    <ImageView
-                        android:src="@drawable/ic_temperature"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"/>
-
-                    <TextView
-                        android:text="Temperature"
-                        android:textSize="12sp"
-                        android:textColor="@color/green"
-                        android:layout_marginStart="4dp"
+                    <LinearLayout
+                        android:id="@+id/btnTemp"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:padding="6dp"
+                        android:background="@drawable/bg_filter_active"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
+                        android:layout_height="wrap_content">
 
-                <LinearLayout
-                    android:id="@+id/btnPH"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:padding="6dp"
-                    android:background="@drawable/bg_filter_inactive"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                        <ImageView
+                            android:src="@drawable/ic_temperature"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"/>
 
-                    <ImageView
-                        android:src="@drawable/ic_water"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"/>
+                        <TextView
+                            android:text="Temperature"
+                            android:textSize="12sp"
+                            android:textColor="@color/green"
+                            android:layout_marginStart="4dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
 
-                    <TextView
-                        android:text="Water pH"
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        android:layout_marginStart="4dp"
+                    <LinearLayout
+                        android:id="@+id/btnPH"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:padding="6dp"
+                        android:background="@drawable/bg_filter_inactive"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
+                        android:layout_height="wrap_content">
 
-                <LinearLayout
-                    android:id="@+id/btnTDS"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:padding="6dp"
-                    android:background="@drawable/bg_filter_inactive"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                        <ImageView
+                            android:src="@drawable/ic_water"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"/>
 
-                    <ImageView
-                        android:src="@drawable/tds"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"/>
+                        <TextView
+                            android:text="Water pH"
+                            android:textColor="@color/black"
+                            android:textSize="12sp"
+                            android:layout_marginStart="4dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
 
-                    <TextView
-                        android:text="Water TDS"
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        android:layout_marginStart="4dp"
+                    <LinearLayout
+                        android:id="@+id/btnTDS"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:padding="6dp"
+                        android:background="@drawable/bg_filter_inactive"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
+                        android:layout_height="wrap_content">
 
-                <LinearLayout
-                    android:id="@+id/btnUV"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:padding="6dp"
-                    android:background="@drawable/bg_filter_inactive"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                        <ImageView
+                            android:src="@drawable/tds"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"/>
 
-                    <ImageView
-                        android:src="@drawable/uv"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"/>
+                        <TextView
+                            android:text="Water TDS"
+                            android:textColor="@color/black"
+                            android:textSize="12sp"
+                            android:layout_marginStart="4dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
 
-                    <TextView
-                        android:text="UV Light"
-                        android:textColor="@color/black"
-                        android:textSize="12sp"
-                        android:layout_marginStart="4dp"
+                    <LinearLayout
+                        android:id="@+id/btnUV"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:padding="6dp"
+                        android:background="@drawable/bg_filter_inactive"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
+                        android:layout_height="wrap_content">
 
-            </LinearLayout>
+                        <ImageView
+                            android:src="@drawable/uv"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"/>
+
+                        <TextView
+                            android:text="UV Light"
+                            android:textColor="@color/black"
+                            android:textSize="12sp"
+                            android:layout_marginStart="4dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </HorizontalScrollView>
 
             <LinearLayout
                 android:layout_marginTop="10dp"
@@ -176,7 +184,6 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    style="@style/TimeButton.Active"
                     android:id="@+id/btn1H"
                     android:text="1 Jam"
                     android:textSize="12sp"
@@ -184,9 +191,11 @@
                     android:layout_margin="4dp"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:textAlignment="center"/>
+                    android:gravity="center"
+                    android:background="@drawable/bg_time_active"
+                    android:textColor="@color/white"/>
+
                 <TextView
-                    style="@style/TimeButton.Inactive"
                     android:id="@+id/btn6H"
                     android:text="6 Jam"
                     android:textSize="12sp"
@@ -194,9 +203,11 @@
                     android:layout_margin="4dp"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:textAlignment="center"/>
+                    android:gravity="center"
+                    android:background="@drawable/bg_time_inactive"
+                    android:textColor="@color/black"/>
+
                 <TextView
-                    style="@style/TimeButton.Inactive"
                     android:id="@+id/btn12H"
                     android:text="12 Jam"
                     android:textSize="12sp"
@@ -204,9 +215,11 @@
                     android:layout_margin="4dp"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:textAlignment="center"/>
+                    android:gravity="center"
+                    android:background="@drawable/bg_time_inactive"
+                    android:textColor="@color/black"/>
+
                 <TextView
-                    style="@style/TimeButton.Inactive"
                     android:id="@+id/btn1D"
                     android:text="1 Hari"
                     android:textSize="12sp"
@@ -214,9 +227,11 @@
                     android:layout_margin="4dp"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:textAlignment="center"/>
+                    android:gravity="center"
+                    android:background="@drawable/bg_time_inactive"
+                    android:textColor="@color/black"/>
+
                 <TextView
-                    style="@style/TimeButton.Inactive"
                     android:id="@+id/btn7D"
                     android:text="7 Hari"
                     android:textSize="12sp"
@@ -224,7 +239,9 @@
                     android:layout_margin="4dp"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
-                    android:textAlignment="center"/>
+                    android:gravity="center"
+                    android:background="@drawable/bg_time_inactive"
+                    android:textColor="@color/black"/>
 
             </LinearLayout>
 
@@ -244,22 +261,13 @@
                 android:layout_height="220dp"
                 android:layout_marginTop="15dp"/>
 
-            <TextView
-                android:text="Pump Control"
-                android:textStyle="bold"
-                android:textSize="14sp"
-                android:textColor="@color/black"
-                android:layout_marginTop="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
             <LinearLayout
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="8dp"
                 android:padding="16dp"
                 android:orientation="horizontal"
                 android:background="@drawable/bg_summary"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="60dp">
 
                 <LinearLayout
                     android:layout_weight="1"
@@ -275,20 +283,16 @@
                         android:text="Minimum"
                         android:textColor="@color/black"
                         android:textSize="12sp"/>
+
                     <TextView
+                        android:id="@+id/tvMin"
                         android:textAlignment="center"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="25.0 °c"
+                        android:text="—"
+                        android:textSize="12sp"
                         android:textColor="@color/black"
                         android:textStyle="bold"/>
-                    <TextView
-                        android:textAlignment="center"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="08.00"
-                        android:textColor="@color/black"
-                        android:textSize="12sp"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -305,21 +309,16 @@
                         android:text="Rata-rata"
                         android:textColor="@color/black"
                         android:textSize="12sp"/>
+
                     <TextView
+                        android:id="@+id/tvAvg"
                         android:textAlignment="center"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="28.2 °c"
+                        android:text="—"
                         android:textSize="12sp"
                         android:textColor="@color/black"
                         android:textStyle="bold"/>
-                    <TextView
-                        android:textAlignment="center"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Hari ini"
-                        android:textColor="@color/black"
-                        android:textSize="12sp"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -336,21 +335,16 @@
                         android:text="Maksimum"
                         android:textColor="@color/black"
                         android:textSize="12sp"/>
+
                     <TextView
+                        android:id="@+id/tvMax"
                         android:textAlignment="center"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="31.0 °c"
+                        android:text="—"
                         android:textSize="12sp"
                         android:textColor="@color/black"
                         android:textStyle="bold"/>
-                    <TextView
-                        android:textAlignment="center"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="12.00"
-                        android:textColor="@color/black"
-                        android:textSize="12sp"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -399,17 +393,19 @@
                         android:layout_height="wrap_content">
 
                         <TextView
+                            android:id="@+id/tvHistTemp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="28.0 °c"
+                            android:text="—"
                             android:textColor="@color/black"
                             android:textStyle="bold"
                             android:textSize="12sp"/>
 
                         <TextView
+                            android:id="@+id/tvHistTempTime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="23 April 2026 12.00"
+                            android:text="—"
                             android:textColor="@color/black"
                             android:textSize="11sp"/>
                     </LinearLayout>
@@ -448,17 +444,19 @@
                         android:layout_height="wrap_content">
 
                         <TextView
+                            android:id="@+id/tvHistPH"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="6.5"
+                            android:text="—"
                             android:textColor="@color/black"
                             android:textStyle="bold"
                             android:textSize="12sp"/>
 
                         <TextView
+                            android:id="@+id/tvHistPHTime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="23 April 2026 12.00"
+                            android:text="—"
                             android:textColor="@color/black"
                             android:textSize="11sp"/>
                     </LinearLayout>
@@ -497,17 +495,19 @@
                         android:layout_height="wrap_content">
 
                         <TextView
+                            android:id="@+id/tvHistTDS"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="700 ppm"
+                            android:text="—"
                             android:textColor="@color/black"
                             android:textStyle="bold"
                             android:textSize="12sp"/>
 
                         <TextView
+                            android:id="@+id/tvHistTDSTime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="23 April 2026 12.00"
+                            android:text="—"
                             android:textColor="@color/black"
                             android:textSize="11sp"/>
                     </LinearLayout>
@@ -546,17 +546,19 @@
                         android:layout_height="wrap_content">
 
                         <TextView
+                            android:id="@+id/tvHistUV"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="3.2"
+                            android:text="—"
                             android:textColor="@color/black"
                             android:textStyle="bold"
                             android:textSize="12sp"/>
 
                         <TextView
+                            android:id="@+id/tvHistUVTime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="23 April 2026 12.00"
+                            android:text="—"
                             android:textColor="@color/black"
                             android:textSize="11sp"/>
                     </LinearLayout>
@@ -569,7 +571,7 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
-        android:layout_width="0dp"
+        android:layout_width="430dp"
         android:layout_height="100dp"
         android:background="@color/white"
         app:menu="@menu/menu_bottom"

@@ -37,7 +37,7 @@
     <LinearLayout
         android:id="@+id/itemTemperature"
         android:layout_width="0dp"
-        android:layout_height="70dp"
+        android:layout_height="80dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="12dp"
@@ -80,7 +80,7 @@
     <LinearLayout
         android:id="@+id/itemPH"
         android:layout_width="0dp"
-        android:layout_height="70dp"
+        android:layout_height="80dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="12dp"
@@ -125,7 +125,7 @@
     <LinearLayout
         android:id="@+id/itemTDS"
         android:layout_width="0dp"
-        android:layout_height="70dp"
+        android:layout_height="80dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="12dp"
@@ -170,7 +170,7 @@
     <LinearLayout
         android:id="@+id/itemUV"
         android:layout_width="0dp"
-        android:layout_height="70dp"
+        android:layout_height="80dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="12dp"
@@ -215,7 +215,7 @@
     <LinearLayout
         android:id="@+id/itemInternet"
         android:layout_width="0dp"
-        android:layout_height="70dp"
+        android:layout_height="80dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="12dp"

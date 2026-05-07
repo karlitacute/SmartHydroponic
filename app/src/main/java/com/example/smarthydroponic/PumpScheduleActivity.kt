@@ -1,21 +1,17 @@
 package com.example.smarthydroponic
 
+import android.app.Dialog
+import android.app.TimePickerDialog
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import android.widget.Switch
+import com.google.android.material.button.MaterialButton
+import java.util.Calendar
 
 class PumpScheduleActivity : AppCompatActivity() {
-
-    private lateinit var switchWater: Switch
-    private lateinit var switchNutrition: Switch
-    private lateinit var btnAdd: Button
-    private lateinit var btnBack: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,27 +24,55 @@ class PumpScheduleActivity : AppCompatActivity() {
             insets
         }
 
-        btnBack = findViewById(R.id.btnBack)
-        switchWater = findViewById(R.id.switchWater)
-        switchNutrition = findViewById(R.id.switchNutrition)
-        btnAdd = findViewById(R.id.btnAdd)
+        findViewById<ImageView>(R.id.btnBack).setOnClickListener { finish() }
 
-        btnBack.setOnClickListener {
-            finish()
+        findViewById<MaterialButton>(R.id.btnAdd).setOnClickListener {
+            showAddScheduleDialog()
+        }
+    }
+
+    private fun showAddScheduleDialog() {
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.dialog_add_schedule)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.9).toInt(),
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        val spinner = dialog.findViewById<Spinner>(R.id.spinnerName)
+        val tvStart = dialog.findViewById<TextView>(R.id.tvStartTime)
+        val tvEnd = dialog.findViewById<TextView>(R.id.tvEndTime)
+        val btnCancel = dialog.findViewById<MaterialButton>(R.id.btnCancel)
+        val btnSave = dialog.findViewById<MaterialButton>(R.id.btnSave)
+
+        val items = listOf("Water Pump", "Nutrition Pump", "Custom")
+        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, items)
+
+        tvStart.setOnClickListener {
+            val cal = Calendar.getInstance()
+            TimePickerDialog(this, { _, h, m ->
+                tvStart.text = String.format("%02d:%02d", h, m)
+            }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
         }
 
-        switchWater.setOnCheckedChangeListener { _, isChecked ->
-            val status = if (isChecked) "ON" else "OFF"
-            Toast.makeText(this, "Water Pump $status", Toast.LENGTH_SHORT).show()
+        tvEnd.setOnClickListener {
+            val cal = Calendar.getInstance()
+            TimePickerDialog(this, { _, h, m ->
+                tvEnd.text = String.format("%02d:%02d", h, m)
+            }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
         }
 
-        switchNutrition.setOnCheckedChangeListener { _, isChecked ->
-            val status = if (isChecked) "ON" else "OFF"
-            Toast.makeText(this, "Nutrition Pump $status", Toast.LENGTH_SHORT).show()
+        btnCancel.setOnClickListener { dialog.dismiss() }
+
+        btnSave.setOnClickListener {
+            val name = spinner.selectedItem.toString()
+            val start = tvStart.text.toString()
+            val end = tvEnd.text.toString()
+            Toast.makeText(this, "$name: $start - $end saved!", Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
         }
 
-        btnAdd.setOnClickListener {
-            Toast.makeText(this, "Tambah Jadwal", Toast.LENGTH_SHORT).show()
-        }
+        dialog.show()
     }
 }

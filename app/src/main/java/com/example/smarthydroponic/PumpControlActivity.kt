@@ -1,9 +1,11 @@
 package com.example.smarthydroponic
 
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.*
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
@@ -38,10 +40,12 @@ class PumpControlActivity : AppCompatActivity() {
         seekPump = findViewById(R.id.seekPump)
         txtPercent = findViewById(R.id.txtPercent)
 
+        seekPump.progressDrawable.setTint(ContextCompat.getColor(this, R.color.green))
+        seekPump.thumb.setTint(ContextCompat.getColor(this, R.color.green))
+
         setMode(true)
 
         btnBack.setOnClickListener { finish() }
-
         btnAuto.setOnClickListener { setMode(true) }
         btnManual.setOnClickListener { setMode(false) }
 
@@ -65,6 +69,13 @@ class PumpControlActivity : AppCompatActivity() {
             btnAuto.setBackgroundResource(R.drawable.bg_mode_active)
             btnManual.setBackgroundResource(R.drawable.bg_mode_inactive)
 
+            radioAuto.buttonTintList = android.content.res.ColorStateList.valueOf(
+                ContextCompat.getColor(this, R.color.green)
+            )
+            radioManual.buttonTintList = android.content.res.ColorStateList.valueOf(
+                ContextCompat.getColor(this, R.color.green)
+            )
+
             seekPump.isEnabled = false
             seekPump.alpha = 0.4f
 
@@ -74,6 +85,13 @@ class PumpControlActivity : AppCompatActivity() {
 
             btnAuto.setBackgroundResource(R.drawable.bg_mode_inactive)
             btnManual.setBackgroundResource(R.drawable.bg_mode_active)
+
+            radioManual.buttonTintList = android.content.res.ColorStateList.valueOf(
+                ContextCompat.getColor(this, R.color.green)
+            )
+            radioAuto.buttonTintList = android.content.res.ColorStateList.valueOf(
+                ContextCompat.getColor(this, R.color.green)
+            )
 
             seekPump.isEnabled = true
             seekPump.alpha = 1f

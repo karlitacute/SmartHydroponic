@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Switch
 import android.widget.TextView
+import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -41,6 +42,7 @@ class HomeActivity : AppCompatActivity() {
 
         val imgWifi = findViewById<ImageView>(R.id.imgWifi)
         val tvSystemDesc = findViewById<TextView>(R.id.tvSystemDesc)
+        val bgStatus = findViewById<LinearLayout>(R.id.bgStatus)
 
         val tvTemp = findViewById<TextView>(R.id.tvTemperature)
         val tvPH = findViewById<TextView>(R.id.tvPH)
@@ -55,43 +57,20 @@ class HomeActivity : AppCompatActivity() {
         val tvInternet = findViewById<TextView>(R.id.tvInternetStatus)
         val tvWifiTop = findViewById<TextView>(R.id.tvStatusAtas)
 
-        val bottomNav = findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavigation)
-        bottomNav.selectedItemId = R.id.nav_home
-        bottomNav.setOnItemSelectedListener {
-
-            when (it.itemId) {
-
-                R.id.nav_home -> true
-
-                R.id.nav_chart -> {
-                    startActivity(Intent(this, ChartActivity::class.java))
-                    true
-                }
-
-                R.id.nav_setting -> {
-                    startActivity(Intent(this, SettingActivity::class.java))
-                    true
-                }
-
-                else -> false
-            }
-        }
-
         connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         networkCallback = object : NetworkCallback() {
 
             override fun onAvailable(network: Network) {
                 runOnUiThread {
-
                     isConnected = true
 
+                    bgStatus.setBackgroundResource(R.drawable.bg_status_online)
                     tvInternet.text = "Online"
                     tvInternet.setTextColor(getColor(R.color.green))
-
                     tvWifiTop.text = "Online"
                     tvWifiTop.setBackgroundResource(R.drawable.btn_online)
-
+                    tvWifiTop.setTextColor(getColor(R.color.green))
                     imgWifi.setImageResource(R.drawable.wifi)
                     tvSystemDesc.text = "The system runs normally"
                 }
@@ -99,15 +78,14 @@ class HomeActivity : AppCompatActivity() {
 
             override fun onLost(network: Network) {
                 runOnUiThread {
-
                     isConnected = false
 
+                    bgStatus.setBackgroundResource(R.drawable.bg_status_offline)
                     tvInternet.text = "Offline"
                     tvInternet.setTextColor(getColor(R.color.brightred))
-
                     tvWifiTop.text = "Offline"
                     tvWifiTop.setBackgroundResource(R.drawable.btn_offline)
-
+                    tvWifiTop.setTextColor(getColor(R.color.brightred))
                     imgWifi.setImageResource(R.drawable.ic_wifioff)
                     tvSystemDesc.text = "No internet connection"
                 }
@@ -132,9 +110,7 @@ class HomeActivity : AppCompatActivity() {
 
         handler.post(object : Runnable {
             override fun run() {
-
                 if (isConnected) {
-
                     val temp = (25..32).random()
                     val ph = (5..8).random()
                     val tds = (600..900).random()
@@ -153,8 +129,7 @@ class HomeActivity : AppCompatActivity() {
                         tvSensor.setTextColor(getColor(R.color.brightred))
                     }
                 }
-
-                handler.postDelayed(this, 3000) // tetap looping
+                handler.postDelayed(this, 3000)
             }
         })
     }

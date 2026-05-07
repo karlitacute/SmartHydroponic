@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.SmartHydroponic" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.SmartHydroponic" parent="Theme.Material3.Light.NoActionBar">
+        <item name="bottomNavigationStyle">@style/NoRippleBottomNav</item>
     </style>
-
     <style name="Theme.SmartHydroponic" parent="Base.Theme.SmartHydroponic" />
+    <style name="NoRippleBottomNav" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemBackground">@null</item>
+        <item name="itemRippleColor">@null</item>
+    </style>
 </resources>

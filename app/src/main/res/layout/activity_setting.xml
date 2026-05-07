@@ -87,6 +87,7 @@
         android:background="@color/white"
         app:menu="@menu/menu_bottom"
         app:itemIconTint="@color/nav_color"
+        app:itemBackground="@android:color/transparent"
         app:itemTextColor="@color/nav_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
