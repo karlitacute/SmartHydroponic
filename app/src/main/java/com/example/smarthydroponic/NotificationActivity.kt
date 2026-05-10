@@ -29,7 +29,6 @@ class NotificationActivity : AppCompatActivity() {
             insets
         }
 
-        // INIT VIEW
         btnBack = findViewById(R.id.btnBack)
         switchTemperature = findViewById(R.id.switchTemperature)
         switchPH = findViewById(R.id.switchPH)
@@ -37,12 +36,10 @@ class NotificationActivity : AppCompatActivity() {
         switchUV = findViewById(R.id.switchUV)
         switchInternet = findViewById(R.id.switchInternet)
 
-        // BACK BUTTON
         btnBack.setOnClickListener {
             finish()
         }
 
-        // SWITCH LISTENER
         switchTemperature.setOnCheckedChangeListener { _, isChecked ->
             showToast("Temperature", isChecked)
         }
@@ -63,7 +60,6 @@ class NotificationActivity : AppCompatActivity() {
             showToast("Internet", isChecked)
         }
     }
-
     private fun showToast(name: String, isChecked: Boolean) {
         val status = if (isChecked) "ON" else "OFF"
         Toast.makeText(this, "$name Notification $status", Toast.LENGTH_SHORT).show()

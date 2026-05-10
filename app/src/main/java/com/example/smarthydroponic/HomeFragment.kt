@@ -15,6 +15,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 
 class HomeFragment : Fragment() {
@@ -31,10 +33,24 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
+        val view = inflater.inflate(
+            R.layout.fragment_home,
+            container,
+            false
+        )
 
-        val imgProfile = view.findViewById<ImageView>(R.id.imgProfile)
+        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom
+            )
+            insets
+        }
+
+        val imgProfile =
+            view.findViewById<ImageView>(R.id.imgProfile)
+
         imgProfile.setOnClickListener {
+
             startActivity(Intent(requireContext(), ProfileActivity::class.java))
         }
 
@@ -55,66 +71,128 @@ class HomeFragment : Fragment() {
         val tvInternet = view.findViewById<TextView>(R.id.tvInternetStatus)
         val tvWifiTop = view.findViewById<TextView>(R.id.tvStatusAtas)
 
+        if (switchPump.isChecked) {
+            tvPumpStatus.text = "ON"
+            tvWater.text = "Running"
+            tvWater.setTextColor(
+                resources.getColor(R.color.green)
+            )
+        } else {
+            tvPumpStatus.text = "OFF"
+            tvWater.text = "Stopped"
+            tvWater.setTextColor(
+                resources.getColor(R.color.brightred)
+            )
+        }
         connectivityManager =
-            requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            requireContext().getSystemService(
+                Context.CONNECTIVITY_SERVICE
+            ) as ConnectivityManager
 
         networkCallback = object : NetworkCallback() {
 
             override fun onAvailable(network: Network) {
+
                 activity?.runOnUiThread {
+
                     isConnected = true
 
-                    bgStatus.setBackgroundResource(R.drawable.bg_status_online)
+                    bgStatus.setBackgroundResource(
+                        R.drawable.bg_status_online
+                    )
 
                     tvInternet.text = "Online"
-                    tvInternet.setTextColor(resources.getColor(R.color.green))
+
+                    tvInternet.setTextColor(
+                        resources.getColor(R.color.green)
+                    )
 
                     tvWifiTop.text = "Online"
-                    tvWifiTop.setBackgroundResource(R.drawable.btn_online)
-                    tvWifiTop.setTextColor(resources.getColor(R.color.green))
 
-                    imgWifi.setImageResource(R.drawable.wifi)
-                    tvSystemDesc.text = "The system runs normally"
+                    tvWifiTop.setBackgroundResource(
+                        R.drawable.btn_online
+                    )
+
+                    tvWifiTop.setTextColor(
+                        resources.getColor(R.color.green)
+                    )
+
+                    imgWifi.setImageResource(
+                        R.drawable.wifi
+                    )
+
+                    tvSystemDesc.text =
+                        "The system runs normally"
                 }
             }
 
             override fun onLost(network: Network) {
+
                 activity?.runOnUiThread {
+
                     isConnected = false
 
-                    bgStatus.setBackgroundResource(R.drawable.bg_status_offline)
+                    bgStatus.setBackgroundResource(
+                        R.drawable.bg_status_offline
+                    )
 
                     tvInternet.text = "Offline"
-                    tvInternet.setTextColor(resources.getColor(R.color.brightred))
+
+                    tvInternet.setTextColor(
+                        resources.getColor(R.color.brightred)
+                    )
 
                     tvWifiTop.text = "Offline"
-                    tvWifiTop.setBackgroundResource(R.drawable.btn_offline)
-                    tvWifiTop.setTextColor(resources.getColor(R.color.brightred))
 
-                    imgWifi.setImageResource(R.drawable.ic_wifioff)
-                    tvSystemDesc.text = "No internet connection"
+                    tvWifiTop.setBackgroundResource(
+                        R.drawable.btn_offline
+                    )
+
+                    tvWifiTop.setTextColor(
+                        resources.getColor(R.color.brightred)
+                    )
+
+                    imgWifi.setImageResource(
+                        R.drawable.ic_wifioff
+                    )
+
+                    tvSystemDesc.text =
+                        "No internet connection"
                 }
             }
         }
-
-        connectivityManager.registerDefaultNetworkCallback(networkCallback)
+        connectivityManager.registerDefaultNetworkCallback(
+            networkCallback
+        )
 
         switchPump.setOnCheckedChangeListener { _, isChecked ->
 
             if (isChecked) {
+
                 tvPumpStatus.text = "ON"
+
                 tvWater.text = "Running"
-                tvWater.setTextColor(resources.getColor(R.color.green))
+
+                tvWater.setTextColor(
+                    resources.getColor(R.color.green)
+                )
+
             } else {
+
                 tvPumpStatus.text = "OFF"
+
                 tvWater.text = "Stopped"
-                tvWater.setTextColor(resources.getColor(R.color.brightred))
+
+                tvWater.setTextColor(
+                    resources.getColor(R.color.brightred)
+                )
             }
         }
 
         handler = Handler(Looper.getMainLooper())
 
         handler.post(object : Runnable {
+
             override fun run() {
 
                 if (isConnected) {
@@ -130,11 +208,20 @@ class HomeFragment : Fragment() {
                     tvUV.text = uv.toString()
 
                     if (temp in 25..30 && ph in 6..7) {
+
                         tvSensor.text = "Normal"
-                        tvSensor.setTextColor(resources.getColor(R.color.green))
+
+                        tvSensor.setTextColor(
+                            resources.getColor(R.color.green)
+                        )
+
                     } else {
+
                         tvSensor.text = "Warning"
-                        tvSensor.setTextColor(resources.getColor(R.color.brightred))
+
+                        tvSensor.setTextColor(
+                            resources.getColor(R.color.brightred)
+                        )
                     }
                 }
 
@@ -146,14 +233,19 @@ class HomeFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+
         super.onDestroyView()
 
         try {
-            connectivityManager.unregisterNetworkCallback(networkCallback)
+
+            connectivityManager.unregisterNetworkCallback(
+                networkCallback
+            )
+
         } catch (e: Exception) {
+
             e.printStackTrace()
         }
-
         handler.removeCallbacksAndMessages(null)
     }
 }
