@@ -28,7 +28,7 @@
             android:gravity="center"
             android:textSize="36sp"
             android:textStyle="bold"
-            android:textColor="@color/green"
+            android:textColor="@color/black"
             android:layout_marginTop="10dp"/>
 
         <TextView
@@ -38,7 +38,7 @@
             android:gravity="center"
             android:textSize="36sp"
             android:textStyle="bold"
-            android:textColor="@color/black"/>
+            android:textColor="@color/green"/>
 
         <TextView
             android:layout_width="224dp"
