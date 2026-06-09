@@ -12,7 +12,6 @@ import androidx.core.view.WindowInsetsCompat
 class NotificationActivity : AppCompatActivity() {
 
     private lateinit var btnBack: ImageView
-    private lateinit var switchTemperature: Switch
     private lateinit var switchPH: Switch
     private lateinit var switchTDS: Switch
     private lateinit var switchUV: Switch
@@ -30,7 +29,6 @@ class NotificationActivity : AppCompatActivity() {
         }
 
         btnBack = findViewById(R.id.btnBack)
-        switchTemperature = findViewById(R.id.switchTemperature)
         switchPH = findViewById(R.id.switchPH)
         switchTDS = findViewById(R.id.switchTDS)
         switchUV = findViewById(R.id.switchUV)
@@ -40,26 +38,27 @@ class NotificationActivity : AppCompatActivity() {
             finish()
         }
 
-        switchTemperature.setOnCheckedChangeListener { _, isChecked ->
-            showToast("Temperature", isChecked)
-        }
-
         switchPH.setOnCheckedChangeListener { _, isChecked ->
+            if (!isChecked) switchPH.isChecked = false
             showToast("pH", isChecked)
         }
 
         switchTDS.setOnCheckedChangeListener { _, isChecked ->
+            if (!isChecked) switchTDS.isChecked = false
             showToast("TDS", isChecked)
         }
 
         switchUV.setOnCheckedChangeListener { _, isChecked ->
+            if (!isChecked) switchUV.isChecked = false
             showToast("UV", isChecked)
         }
 
         switchInternet.setOnCheckedChangeListener { _, isChecked ->
+            if (!isChecked) switchInternet.isChecked = false
             showToast("Internet", isChecked)
         }
     }
+
     private fun showToast(name: String, isChecked: Boolean) {
         val status = if (isChecked) "ON" else "OFF"
         Toast.makeText(this, "$name Notification $status", Toast.LENGTH_SHORT).show()

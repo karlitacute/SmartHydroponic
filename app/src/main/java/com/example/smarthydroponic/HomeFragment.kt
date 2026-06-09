@@ -26,7 +26,6 @@ class HomeFragment : Fragment() {
     private lateinit var database: DatabaseReference
     private var pumpNutrisiListener: ValueEventListener? = null
     private var pumpAirListener: ValueEventListener? = null
-    private var tempListener: ValueEventListener? = null
     private var phListener: ValueEventListener? = null
     private var tdsListener: ValueEventListener? = null
     private var uvListener: ValueEventListener? = null
@@ -51,7 +50,6 @@ class HomeFragment : Fragment() {
         val tvSystemDesc = view.findViewById<TextView>(R.id.tvSystemDesc)
         val bgStatus = view.findViewById<LinearLayout>(R.id.bgStatus)
 
-        val tvTemp = view.findViewById<TextView>(R.id.tvTemperature)
         val tvPH = view.findViewById<TextView>(R.id.tvPH)
         val tvTDS = view.findViewById<TextView>(R.id.tvTDS)
         val tvUV = view.findViewById<TextView>(R.id.tvUV)
@@ -148,22 +146,6 @@ class HomeFragment : Fragment() {
             }
         }
 
-        tempListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val temp = snapshot.getValue(Float::class.java) ?: return
-                tvTemp.text = String.format(Locale.US, "%.1f°C", temp)
-                if (temp in 25.0..30.0) {
-                    tvSensor.text = "Normal"
-                    tvSensor.setTextColor(resources.getColor(R.color.green))
-                } else {
-                    tvSensor.text = "Warning"
-                    tvSensor.setTextColor(resources.getColor(R.color.brightred))
-                }
-            }
-            override fun onCancelled(error: DatabaseError) { }
-        }
-        database.child("sensors/temperature").addValueEventListener(tempListener!!)
-
         phListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val ph = snapshot.getValue(Float::class.java) ?: return
@@ -225,7 +207,6 @@ class HomeFragment : Fragment() {
 
         pumpNutrisiListener?.let { database.child("relay/pompa_nutrisi").removeEventListener(it) }
         pumpAirListener?.let { database.child("relay/pompa_air").removeEventListener(it) }
-        tempListener?.let { database.child("sensors/temperature").removeEventListener(it) }
         phListener?.let { database.child("sensors/ph").removeEventListener(it) }
         tdsListener?.let { database.child("sensors/tds").removeEventListener(it) }
         uvListener?.let { database.child("sensors/uv").removeEventListener(it) }

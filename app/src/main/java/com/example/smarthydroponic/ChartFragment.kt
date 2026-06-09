@@ -31,12 +31,6 @@ class ChartFragment : Fragment() {
     private lateinit var lineChart: LineChart
     private lateinit var tvChartTitle: TextView
 
-    private lateinit var btn1H: TextView
-    private lateinit var btn6H: TextView
-    private lateinit var btn12H: TextView
-    private lateinit var btn1D: TextView
-    private lateinit var btn7D: TextView
-
     private lateinit var btnTemp: LinearLayout
     private lateinit var btnPH: LinearLayout
     private lateinit var btnTDS: LinearLayout
@@ -56,7 +50,6 @@ class ChartFragment : Fragment() {
     private lateinit var tvHistUVTime: TextView
 
     private var selectedType = "TEMP"
-    private var selectedTimeRange = "1H"
 
     private val dataTemp = ArrayDeque<Pair<Long, Float>>()
     private val dataPH = ArrayDeque<Pair<Long, Float>>()
@@ -64,7 +57,7 @@ class ChartFragment : Fragment() {
     private val dataUV = ArrayDeque<Pair<Long, Float>>()
 
     private val handler = Handler(Looper.getMainLooper())
-    private val updateInterval = 3000L
+    private val updateInterval = 1000L
 
     private val dateFormat =
         SimpleDateFormat("d MMM yyyy HH:mm", Locale("id", "ID"))
@@ -116,17 +109,11 @@ class ChartFragment : Fragment() {
         generateInitialData()
 
         selectedType = "TEMP"
-        selectedTimeRange = "1H"
 
         updateChartTitle()
         setActiveFilter(btnTemp)
-        setActiveTimeButton(
-            btn1H,
-            btn6H,
-            btn12H,
-            btn1D,
-            btn7D
-        )
+        updateChart()
+        updatePumpControl()
 
         setupClickListeners()
 
@@ -156,12 +143,6 @@ class ChartFragment : Fragment() {
 
         lineChart = rootView.findViewById(R.id.lineChart)
         tvChartTitle = rootView.findViewById(R.id.tvChartTitle)
-
-        btn1H = rootView.findViewById(R.id.btn1H)
-        btn6H = rootView.findViewById(R.id.btn6H)
-        btn12H = rootView.findViewById(R.id.btn12H)
-        btn1D = rootView.findViewById(R.id.btn1D)
-        btn7D = rootView.findViewById(R.id.btn7D)
 
         btnTemp = rootView.findViewById(R.id.btnTemp)
         btnPH = rootView.findViewById(R.id.btnPH)
@@ -218,79 +199,14 @@ class ChartFragment : Fragment() {
             updateChart()
             updatePumpControl()
         }
-
-        btn1H.setOnClickListener {
-            selectedTimeRange = "1H"
-            setActiveTimeButton(
-                btn1H,
-                btn6H,
-                btn12H,
-                btn1D,
-                btn7D
-            )
-            updateChart()
-            updatePumpControl()
-        }
-
-        btn6H.setOnClickListener {
-            selectedTimeRange = "6H"
-            setActiveTimeButton(
-                btn6H,
-                btn1H,
-                btn12H,
-                btn1D,
-                btn7D
-            )
-            updateChart()
-            updatePumpControl()
-        }
-
-        btn12H.setOnClickListener {
-            selectedTimeRange = "12H"
-            setActiveTimeButton(
-                btn12H,
-                btn1H,
-                btn6H,
-                btn1D,
-                btn7D
-            )
-            updateChart()
-            updatePumpControl()
-        }
-
-        btn1D.setOnClickListener {
-            selectedTimeRange = "1D"
-            setActiveTimeButton(
-                btn1D,
-                btn1H,
-                btn6H,
-                btn12H,
-                btn7D
-            )
-            updateChart()
-            updatePumpControl()
-        }
-
-        btn7D.setOnClickListener {
-            selectedTimeRange = "7D"
-            setActiveTimeButton(
-                btn7D,
-                btn1H,
-                btn6H,
-                btn12H,
-                btn1D
-            )
-            updateChart()
-            updatePumpControl()
-        }
     }
 
     private fun generateInitialData() {
 
         val now = System.currentTimeMillis()
 
-        val stepMs = 10 * 60_000L
-        val count = (7 * 24 * 60 / 10)
+        val stepMs = 60 * 60_000L
+        val count = (7 * 24)
 
         var lastTemp = 28f
         var lastPH = 6.5f
@@ -403,22 +319,17 @@ class ChartFragment : Fragment() {
     private fun updateChart() {
 
         val rawData = getActiveData()
-        val filtered = filterByTimeRange(rawData)
 
-        if (filtered.isEmpty()) return
+        if (rawData.isEmpty()) return
 
-        val entries = filtered.mapIndexed { index, pair ->
+        val displayData = rawData.toList().takeLast(24)
+
+        val entries = displayData.mapIndexed { index, pair ->
             Entry(index.toFloat(), pair.second)
         }
 
-        val labelFormat = when (selectedTimeRange) {
-            "7D" -> SimpleDateFormat("d/MM", Locale("id", "ID"))
-            "1D" -> SimpleDateFormat("d/MM HH:mm", Locale("id", "ID"))
-            else -> timeFormat
-        }
-
-        val xLabels = filtered.map {
-            labelFormat.format(Date(it.first))
+        val xLabels = displayData.map {
+            timeFormat.format(Date(it.first))
         }
 
         lineChart.xAxis.valueFormatter =
@@ -435,23 +346,8 @@ class ChartFragment : Fragment() {
                 }
             }
 
-        val maxLabels = when (selectedTimeRange) {
-            "1H" -> 6
-            "6H" -> 6
-            "12H" -> 6
-            "1D" -> 4
-            "7D" -> 7
-            else -> 6
-        }
-
-        lineChart.xAxis.setLabelCount(maxLabels, true)
-
-        lineChart.xAxis.labelRotationAngle =
-            when (selectedTimeRange) {
-                "1D" -> -45f
-                "7D" -> -30f
-                else -> -30f
-            }
+        lineChart.xAxis.setLabelCount(6, true)
+        lineChart.xAxis.labelRotationAngle = -30f
 
         val color = when (selectedType) {
             "TEMP" -> Color.parseColor("#2e7d32")
@@ -487,11 +383,10 @@ class ChartFragment : Fragment() {
     private fun updatePumpControl() {
 
         val rawData = getActiveData()
-        val filtered = filterByTimeRange(rawData)
 
-        if (filtered.isEmpty()) return
+        if (rawData.isEmpty()) return
 
-        val values = filtered.map { it.second }
+        val values = rawData.map { it.second }
 
         val minVal = values.min()
         val maxVal = values.max()
@@ -554,38 +449,6 @@ class ChartFragment : Fragment() {
         }
     }
 
-    private fun filterByTimeRange(
-        data: ArrayDeque<Pair<Long, Float>>
-    ): List<Pair<Long, Float>> {
-
-        val now = System.currentTimeMillis()
-
-        val cutoff = when (selectedTimeRange) {
-            "1H" -> now - 1 * 3600_000L
-            "6H" -> now - 6 * 3600_000L
-            "12H" -> now - 12 * 3600_000L
-            "1D" -> now - 24 * 3600_000L
-            "7D" -> now - 7 * 24 * 3600_000L
-            else -> now - 3600_000L
-        }
-
-        val filtered = data.filter {
-            it.first >= cutoff
-        }
-
-        return if (filtered.size > 60) {
-
-            val step = filtered.size / 60
-
-            filtered.filterIndexed { index, _ ->
-                index % step == 0
-            }
-
-        } else {
-            filtered
-        }
-    }
-
     private fun getUnit(): String {
 
         return when (selectedType) {
@@ -629,24 +492,6 @@ class ChartFragment : Fragment() {
             "TDS" -> "TDS Chart (ppm)"
             "UV" -> "UV Light Chart"
             else -> ""
-        }
-    }
-
-    private fun setActiveTimeButton(
-        active: TextView,
-        vararg others: TextView
-    ) {
-
-        active.setBackgroundResource(R.drawable.bg_time_active)
-        active.setTextColor(Color.WHITE)
-
-        for (btn in others) {
-
-            btn.setBackgroundResource(R.drawable.bg_time_inactive)
-
-            btn.setTextColor(
-                Color.parseColor("#333333")
-            )
         }
     }
 

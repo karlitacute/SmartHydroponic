@@ -14,15 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartHydroponic">
         <activity
-            android:name=".BottomNav"
-            android:exported="false" />
-        <activity
-            android:name=".DialogAddSchedule"
-            android:exported="false" />
-        <activity
-            android:name=".dialog_add_schedule"
-            android:exported="false" />
-        <activity
             android:name=".LogoutActivity"
             android:exported="false" />
         <activity
