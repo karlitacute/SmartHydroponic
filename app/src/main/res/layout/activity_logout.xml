@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/verylightcoolgray"
-    tools:context=".LogoutActivity">
+    tools:context=".auth.LogoutActivity">
 
         <LinearLayout
             android:id="@+id/headerLogout"

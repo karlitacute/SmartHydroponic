@@ -1,14 +1,17 @@
-package com.example.smarthydroponic
+package com.example.smarthydroponic.chart
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.smarthydroponic.R
+import com.example.smarthydroponic.setting.SettingFragment
+import com.example.smarthydroponic.home.HomeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class SettingActivity : AppCompatActivity() {
+class ChartActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_setting)
+        setContentView(R.layout.activity_chart)
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigation)
 

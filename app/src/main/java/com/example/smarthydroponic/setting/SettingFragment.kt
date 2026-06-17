@@ -1,4 +1,4 @@
-package com.example.smarthydroponic
+package com.example.smarthydroponic.setting
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,6 +10,11 @@ import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import com.example.smarthydroponic.auth.LoginActivity
+import com.example.smarthydroponic.home.NotificationActivity
+import com.example.smarthydroponic.profile.ProfileActivity
+import com.example.smarthydroponic.pump.PumpScheduleActivity
+import com.example.smarthydroponic.R
 
 class SettingFragment : Fragment() {
 
@@ -58,9 +63,6 @@ class SettingFragment : Fragment() {
             startActivity(intent)
         }
 
-        val itemPump =
-            view.findViewById<View>(R.id.itemPump)
-
         val itemSchedule =
             view.findViewById<View>(R.id.itemSchedule)
 
@@ -69,12 +71,6 @@ class SettingFragment : Fragment() {
 
         val itemLogout =
             view.findViewById<View>(R.id.itemLogout)
-
-        itemPump.setOnClickListener {
-            startActivity(
-                Intent(requireContext(), PumpControlActivity::class.java)
-            )
-        }
 
         itemSchedule.setOnClickListener {
             startActivity(

@@ -170,7 +170,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/itemInternet"
+        android:id="@+id/itempanel"
         android:layout_width="0dp"
         android:layout_height="80dp"
         android:orientation="horizontal"
@@ -193,20 +193,20 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Internet Connection"
+                android:text="Solar Panel Warning"
                 android:textStyle="bold"
                 android:textSize="14sp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Notification if the connection is lost"
+                android:text="Active if solar panel overheating (>70°C)"
                 android:textSize="12sp"
                 android:textColor="@color/black"/>
         </LinearLayout>
 
         <Switch
-            android:id="@+id/switchInternet"
+            android:id="@+id/switchPanel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"

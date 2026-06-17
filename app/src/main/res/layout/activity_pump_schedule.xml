@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PumpScheduleActivity">
+    tools:context=".pump.PumpScheduleActivity">
 
     <LinearLayout
         android:id="@+id/headerScedule"
@@ -39,101 +39,13 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/waterPump"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="12dp"
-        android:background="@drawable/bg_item"
-        android:layout_margin="16dp"
-        app:layout_constraintTop_toBottomOf="@id/headerScedule"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Water Pump"
-                android:textStyle="bold"
-                android:textSize="14sp"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="06.00 - 07.00"
-                android:textSize="12sp"
-                android:textColor="#666"/>
-        </LinearLayout>
-
-        <Switch
-            android:id="@+id/switchWater"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:thumbTint="@color/switch_thumb"
-            android:trackTint="@color/switch_track"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/nutritionPump"
-        android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="12dp"
-        android:background="@drawable/bg_item"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/waterPump"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Nutrition Pump"
-                android:textStyle="bold"
-                android:textSize="14sp"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="17.00 - 18.00"
-                android:textSize="12sp"
-                android:textColor="#666"/>
-        </LinearLayout>
-
-        <Switch
-            android:id="@+id/switchNutrition"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:thumbTint="@color/switch_thumb"
-            android:trackTint="@color/switch_track"/>
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/containerSchedule"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintTop_toBottomOf="@id/nutritionPump"
+        app:layout_constraintTop_toBottomOf="@id/headerScedule"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
