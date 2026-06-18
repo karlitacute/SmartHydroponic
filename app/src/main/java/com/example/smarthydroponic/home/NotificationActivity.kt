@@ -19,14 +19,12 @@ class NotificationActivity : AppCompatActivity() {
     private lateinit var switchPH: Switch
     private lateinit var switchTDS: Switch
     private lateinit var switchUV: Switch
-    private lateinit var switchPanel: Switch
 
     companion object {
         const val PREF_NAME = "notif_settings"
         const val KEY_PH = "switch_ph"
         const val KEY_TDS = "switch_tds"
         const val KEY_UV = "switch_uv"
-        const val KEY_PANEL = "switch_panel"
 
         const val CHANNEL_ID = "hydroponic_alerts"
 
@@ -57,14 +55,12 @@ class NotificationActivity : AppCompatActivity() {
         switchPH = findViewById(R.id.switchPH)
         switchTDS = findViewById(R.id.switchTDS)
         switchUV = findViewById(R.id.switchUV)
-        switchPanel = findViewById(R.id.switchPanel)
 
         val prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE)
 
         switchPH.isChecked = prefs.getBoolean(KEY_PH, true)
         switchTDS.isChecked = prefs.getBoolean(KEY_TDS, true)
         switchUV.isChecked = prefs.getBoolean(KEY_UV, true)
-        switchPanel.isChecked = prefs.getBoolean(KEY_PANEL, true)
 
         btnBack.setOnClickListener {
             finish()
@@ -83,11 +79,6 @@ class NotificationActivity : AppCompatActivity() {
         switchUV.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit { putBoolean(KEY_UV, isChecked) }
             showToast("UV", isChecked)
-        }
-
-        switchPanel.setOnCheckedChangeListener { _, isChecked ->
-            prefs.edit { putBoolean(KEY_PANEL, isChecked) }
-            showToast("PANEL", isChecked)
         }
     }
 

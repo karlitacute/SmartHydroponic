@@ -59,6 +59,8 @@ class PumpScheduleActivity : AppCompatActivity() {
 
         loadSchedules()
 
+        ScheduleAlarmManager.rescheduleAll(this, currentUserId)
+
         findViewById<ImageView>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<MaterialButton>(R.id.btnAdd).setOnClickListener { showAddScheduleDialog() }
     }
@@ -85,27 +87,17 @@ class PumpScheduleActivity : AppCompatActivity() {
             "is_active"  to isActive,
             "created_at" to nowIso()
         )
-
         Log.d("FB_SCHEDULE", "Push: schedule/$firebaseKey | is_active=$isActive")
-
         dbRef.child(firebaseKey).setValue(data)
-            .addOnSuccessListener {
-                Log.d("FB_SCHEDULE", "Berhasil disimpan: schedule/$firebaseKey")
-            }
-            .addOnFailureListener { e ->
-                Log.e("FB_SCHEDULE", "Gagal simpan: ${e.message}")
-            }
+            .addOnSuccessListener { Log.d("FB_SCHEDULE", "Berhasil disimpan: schedule/$firebaseKey") }
+            .addOnFailureListener { e -> Log.e("FB_SCHEDULE", "Gagal simpan: ${e.message}") }
     }
 
     private fun updateActiveFirebase(firebaseKey: String, isActive: Boolean) {
         if (firebaseKey.isEmpty()) return
         dbRef.child(firebaseKey).child("is_active").setValue(isActive)
-            .addOnSuccessListener {
-                Log.d("FB_SCHEDULE", "is_active updated: $firebaseKey = $isActive")
-            }
-            .addOnFailureListener { e ->
-                Log.e("FB_SCHEDULE", "Gagal update is_active: ${e.message}")
-            }
+            .addOnSuccessListener { Log.d("FB_SCHEDULE", "is_active updated: $firebaseKey = $isActive") }
+            .addOnFailureListener { e -> Log.e("FB_SCHEDULE", "Gagal update is_active: ${e.message}") }
     }
 
     private fun deleteFromFirebase(firebaseKey: String) {
@@ -114,12 +106,8 @@ class PumpScheduleActivity : AppCompatActivity() {
             return
         }
         dbRef.child(firebaseKey).removeValue()
-            .addOnSuccessListener {
-                Log.d("FB_SCHEDULE", "Berhasil dihapus: schedule/$firebaseKey")
-            }
-            .addOnFailureListener { e ->
-                Log.e("FB_SCHEDULE", "Gagal hapus: ${e.message}")
-            }
+            .addOnSuccessListener { Log.d("FB_SCHEDULE", "Berhasil dihapus: schedule/$firebaseKey") }
+            .addOnFailureListener { e -> Log.e("FB_SCHEDULE", "Gagal hapus: ${e.message}") }
     }
 
     private fun showAddScheduleDialog() {
@@ -156,7 +144,6 @@ class PumpScheduleActivity : AppCompatActivity() {
 
             val firebaseKey = dbRef.push().key
             if (firebaseKey == null) {
-                Log.e("FB_SCHEDULE", "firebaseKey null — tidak ada koneksi Firebase")
                 Toast.makeText(this, "Gagal: tidak ada koneksi Firebase", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -165,6 +152,8 @@ class PumpScheduleActivity : AppCompatActivity() {
             addScheduleCard(index, name, start, end, firebaseKey, isActive = true)
             saveSchedule(index, name, start, end, firebaseKey, isActive = true)
             pushToFirebase(name, start, end, firebaseKey, isActive = true)
+
+            ScheduleAlarmManager.rescheduleAll(this, currentUserId)
 
             Toast.makeText(this, "$name : $start - $end saved!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
@@ -226,6 +215,10 @@ class PumpScheduleActivity : AppCompatActivity() {
             val currentActive = getIsActive(index)
             updateSchedule(index, name, start, end, firebaseKey, currentActive)
             pushToFirebase(name, start, end, firebaseKey, currentActive)
+
+            // Restart worker agar perubahan jadwal langsung aktif
+            ScheduleAlarmManager.rescheduleAll(this, currentUserId)
+
             Toast.makeText(this, "Schedule updated!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
 
@@ -245,6 +238,10 @@ class PumpScheduleActivity : AppCompatActivity() {
                 deleteFromFirebase(firebaseKey)
                 containerSchedule.removeAllViews()
                 loadSchedules()
+
+                // Restart worker agar jadwal yang dihapus tidak aktif lagi
+                ScheduleAlarmManager.rescheduleAll(this, currentUserId)
+
                 Toast.makeText(this, "Schedule deleted.", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Cancel", null)
@@ -257,7 +254,6 @@ class PumpScheduleActivity : AppCompatActivity() {
             tv.text = String.format("%02d:%02d", hour, minute)
         }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
     }
-
     private fun addScheduleCard(
         index: Int,
         name: String,
@@ -279,6 +275,7 @@ class PumpScheduleActivity : AppCompatActivity() {
         switchItem.setOnCheckedChangeListener { _, checked ->
             updateIsActive(index, checked)
             updateActiveFirebase(firebaseKey, checked)
+            ScheduleAlarmManager.rescheduleAll(this, currentUserId)
             val status = if (checked) "aktif" else "nonaktif"
             Toast.makeText(this, "$name $status", Toast.LENGTH_SHORT).show()
         }
@@ -293,19 +290,12 @@ class PumpScheduleActivity : AppCompatActivity() {
     private fun getJsonArray(): JSONArray {
         val prefs = getSharedPreferences("schedule_data", MODE_PRIVATE)
         val raw = prefs.getString(scheduleKey(), "[]") ?: "[]"
-        return try {
-            JSONArray(raw)
-        } catch (e: Exception) {
-            Log.e("FB_SCHEDULE", "JSONArray parse error: ${e.message}")
-            JSONArray()
-        }
+        return try { JSONArray(raw) } catch (e: Exception) { JSONArray() }
     }
 
     private fun saveJsonArray(array: JSONArray) {
         getSharedPreferences("schedule_data", MODE_PRIVATE)
-            .edit()
-            .putString(scheduleKey(), array.toString())
-            .apply()
+            .edit().putString(scheduleKey(), array.toString()).apply()
     }
 
     private fun getScheduleCount(): Int = getJsonArray().length()

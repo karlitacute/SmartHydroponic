@@ -11,7 +11,6 @@ import com.example.smarthydroponic.home.NotificationActivity
 
 object SensorNotifier {
 
-    // Menyimpan status terakhir (true = sedang dalam kondisi tidak normal)
     private var phAlertActive = false
     private var tdsAlertActive = false
     private var uvAlertActive = false
@@ -26,14 +25,14 @@ object SensorNotifier {
         val isAbnormal = ph < NotificationActivity.PH_MIN || ph > NotificationActivity.PH_MAX
 
         if (isAbnormal && !phAlertActive) {
-            // baru jadi tidak normal -> kirim notif sekali
+
             sendNotification(
                 context, 1, "Peringatan pH Tidak Normal",
                 "Nilai pH saat ini $ph (ideal ${NotificationActivity.PH_MIN} - ${NotificationActivity.PH_MAX})"
             )
             phAlertActive = true
         } else if (!isAbnormal) {
-            // sudah normal lagi -> reset, supaya kalau abnormal lagi nanti, notif muncul lagi
+
             phAlertActive = false
         }
     }

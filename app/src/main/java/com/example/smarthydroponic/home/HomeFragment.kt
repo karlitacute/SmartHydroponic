@@ -61,14 +61,15 @@ class HomeFragment : Fragment() {
         val tvTDS = view.findViewById<TextView>(R.id.tvTDS)
         val tvUV  = view.findViewById<TextView>(R.id.tvUV)
 
-        val tvPumpStatus = view.findViewById<TextView>(R.id.tvNutritionAStatus)
-        val switchPumpNutritionA   = view.findViewById<Switch>(R.id.switchPumpNutritionA)
+        val tvNutritionAStatus = view.findViewById<TextView>(R.id.tvNutritionAStatus)
+        val switchPumpNutritionA = view.findViewById<Switch>(R.id.switchPumpNutritionA)
 
-        val tvPumpAirStatus = view.findViewById<TextView>(R.id.tvNutritionBStatus)
-        val switchPumpNutritionB  = view.findViewById<Switch>(R.id.switchPumpNutritionB)
+        val tvNutritionBStatus = view.findViewById<TextView>(R.id.tvNutritionBStatus)
+        val switchPumpNutritionB = view.findViewById<Switch>(R.id.switchPumpNutritionB)
 
-        val tvWater    = view.findViewById<TextView>(R.id.tvNutritionA)
-        val tvNutrisi  = view.findViewById<TextView>(R.id.tvNutritionB)
+        val tvSensor   = view.findViewById<TextView>(R.id.tvSensor)
+        val tvNutritionA  = view.findViewById<TextView>(R.id.tvNutritionA)
+        val tvNutritionB  = view.findViewById<TextView>(R.id.tvNutritionB)
         val tvInternet = view.findViewById<TextView>(R.id.tvInternetStatus)
         val tvWifiTop  = view.findViewById<TextView>(R.id.tvStatusAtas)
 
@@ -80,8 +81,8 @@ class HomeFragment : Fragment() {
             "https://smarthydroponic-303e9-default-rtdb.asia-southeast1.firebasedatabase.app"
         ).reference
 
-        updatePumpNutrisiUI(switchPumpNutritionA.isChecked, tvPumpStatus, tvWater)
-        updatePumpAirUI(switchPumpNutritionB.isChecked, tvPumpAirStatus, tvNutrisi)
+        updatePumpAUI(switchPumpNutritionA.isChecked, tvNutritionAStatus, tvNutritionA)
+        updatePumpBUI(switchPumpNutritionB.isChecked, tvNutritionBStatus, tvNutritionB)
 
         connectivityManager = requireContext().getSystemService(
             Context.CONNECTIVITY_SERVICE
@@ -115,51 +116,43 @@ class HomeFragment : Fragment() {
         }
         connectivityManager.registerDefaultNetworkCallback(networkCallback)
 
+        // Pump Nutrition A → relay/pompa_nutritionA
         pumpNutritionAListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val raw = snapshot.value
-                val pumpOn = when (raw) {
-                    is Boolean -> raw
-                    is String  -> raw.equals("true", ignoreCase = true) ||
-                            raw.equals("ON", ignoreCase = true)
-                    else       -> false
-                }
+                val pumpOn = parsePumpValue(snapshot.value)
                 isProgrammaticChange = true
                 switchPumpNutritionA.isChecked = pumpOn
                 isProgrammaticChange = false
-                updatePumpNutrisiUI(pumpOn, tvPumpStatus, tvWater)
+                updatePumpAUI(pumpOn, tvNutritionAStatus, tvNutritionA)
+                tvSensor.text = "Normal"
+                tvSensor.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
             }
             override fun onCancelled(error: DatabaseError) {}
         }
-        database.child("relay/pompa_nutrisi").addValueEventListener(pumpNutritionAListener!!)
+        database.child("relay/pompa_nutritionA").addValueEventListener(pumpNutritionAListener!!)
 
         switchPumpNutritionA.setOnCheckedChangeListener { _, isChecked ->
             if (!isProgrammaticChange) {
-                database.child("relay/pompa_nutrisi").setValue(isChecked)
+                database.child("relay/pompa_nutritionA").setValue(isChecked)
             }
         }
 
+        // Pump Nutrition B → relay/pompa_nutritionB
         pumpNutritionBListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val raw = snapshot.value
-                val pumpOn = when (raw) {
-                    is Boolean -> raw
-                    is String  -> raw.equals("true", ignoreCase = true) ||
-                            raw.equals("ON", ignoreCase = true)
-                    else       -> false
-                }
+                val pumpOn = parsePumpValue(snapshot.value)
                 isProgrammaticChange = true
                 switchPumpNutritionB.isChecked = pumpOn
                 isProgrammaticChange = false
-                updatePumpAirUI(pumpOn, tvPumpAirStatus, tvNutrisi)
+                updatePumpBUI(pumpOn, tvNutritionBStatus, tvNutritionB)
             }
             override fun onCancelled(error: DatabaseError) {}
         }
-        database.child("relay/pompa_air").addValueEventListener(pumpNutritionBListener!!)
+        database.child("relay/pompa_nutritionB").addValueEventListener(pumpNutritionBListener!!)
 
         switchPumpNutritionB.setOnCheckedChangeListener { _, isChecked ->
             if (!isProgrammaticChange) {
-                database.child("relay/pompa_air").setValue(isChecked)
+                database.child("relay/pompa_nutritionB").setValue(isChecked)
             }
         }
 
@@ -196,38 +189,32 @@ class HomeFragment : Fragment() {
         return view
     }
 
-    private fun updatePumpNutrisiUI(isOn: Boolean, tvStatus: TextView, tvWater: TextView) {
-        if (isOn) {
-            tvStatus.text = "ON"
-            tvStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
-            tvWater.text = "Running"
-            tvWater.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
-        } else {
-            tvStatus.text = "OFF"
-            tvStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.brightred))
-            tvWater.text = "Stopped"
-            tvWater.setTextColor(ContextCompat.getColor(requireContext(), R.color.brightred))
-        }
+    private fun parsePumpValue(raw: Any?): Boolean = when (raw) {
+        is Boolean -> raw
+        is String  -> raw.equals("true", ignoreCase = true) || raw.equals("ON", ignoreCase = true)
+        else       -> false
     }
 
-    private fun updatePumpAirUI(isOn: Boolean, tvStatus: TextView, tvNutrisi: TextView) {
-        if (isOn) {
-            tvStatus.text = "ON"
-            tvStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
-            tvNutrisi.text = "Running"
-            tvNutrisi.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
-        } else {
-            tvStatus.text = "OFF"
-            tvStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.brightred))
-            tvNutrisi.text = "Stopped"
-            tvNutrisi.setTextColor(ContextCompat.getColor(requireContext(), R.color.brightred))
-        }
+    private fun updatePumpAUI(isOn: Boolean, tvStatus: TextView, tvNutritionA: TextView) {
+        val color = if (isOn) R.color.green else R.color.brightred
+        tvStatus.text = if (isOn) "ON" else "OFF"
+        tvStatus.setTextColor(ContextCompat.getColor(requireContext(), color))
+        tvNutritionA.text = if (isOn) "Running" else "Stopped"
+        tvNutritionA.setTextColor(ContextCompat.getColor(requireContext(), color))
+    }
+
+    private fun updatePumpBUI(isOn: Boolean, tvStatus: TextView, tvNutritionB: TextView) {
+        val color = if (isOn) R.color.green else R.color.brightred
+        tvStatus.text = if (isOn) "ON" else "OFF"
+        tvStatus.setTextColor(ContextCompat.getColor(requireContext(), color))
+        tvNutritionB.text = if (isOn) "Running" else "Stopped"
+        tvNutritionB.setTextColor(ContextCompat.getColor(requireContext(), color))
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        pumpNutritionAListener?.let { database.child("relay/pompa_nutrisi").removeEventListener(it) }
-        pumpNutritionBListener?.let { database.child("relay/pompa_air").removeEventListener(it) }
+        pumpNutritionAListener?.let { database.child("relay/pompa_nutritionA").removeEventListener(it) }
+        pumpNutritionBListener?.let { database.child("relay/pompa_nutritionB").removeEventListener(it) }
         phListener?.let  { database.child("sensors/ph").removeEventListener(it) }
         tdsListener?.let { database.child("sensors/tds").removeEventListener(it) }
         uvListener?.let  { database.child("sensors/uv").removeEventListener(it) }

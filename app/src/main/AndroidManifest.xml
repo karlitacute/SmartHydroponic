@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
@@ -17,35 +19,29 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartHydroponic">
 
-        <receiver android:name=".pump.PumpAlarmReceiver" />
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup" />
+        </provider>
 
-        <activity
-            android:name=".auth.LogoutActivity"
+        <receiver
+            android:name=".pump.PumpAlarmReceiver"
             android:exported="false" />
-        <activity
-            android:name=".home.NotificationActivity"
-            android:exported="false" />
-        <activity
-            android:name=".pump.PumpScheduleActivity"
-            android:exported="false" />
-        <activity
-            android:name=".profile.ProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".setting.SettingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".home.HomeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".chart.ChartActivity"
-            android:exported="false" />
-        <activity
-            android:name=".auth.LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".auth.WelcomeActivity"
-            android:exported="true">
+
+        <activity android:name=".auth.LogoutActivity" android:exported="false" />
+        <activity android:name=".home.NotificationActivity" android:exported="false" />
+        <activity android:name=".pump.PumpScheduleActivity" android:exported="false" />
+        <activity android:name=".profile.ProfileActivity" android:exported="false" />
+        <activity android:name=".setting.SettingActivity" android:exported="false" />
+        <activity android:name=".home.HomeActivity" android:exported="false" />
+        <activity android:name=".chart.ChartActivity" android:exported="false" />
+        <activity android:name=".auth.LoginActivity" android:exported="false" />
+        <activity android:name=".auth.WelcomeActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
