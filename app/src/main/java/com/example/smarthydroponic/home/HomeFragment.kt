@@ -116,7 +116,6 @@ class HomeFragment : Fragment() {
         }
         connectivityManager.registerDefaultNetworkCallback(networkCallback)
 
-        // Pump Nutrition A → relay/pompa_nutritionA
         pumpNutritionAListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val pumpOn = parsePumpValue(snapshot.value)
@@ -137,7 +136,6 @@ class HomeFragment : Fragment() {
             }
         }
 
-        // Pump Nutrition B → relay/pompa_nutritionB
         pumpNutritionBListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val pumpOn = parsePumpValue(snapshot.value)

@@ -7,12 +7,13 @@ import android.content.Intent
 import android.util.Log
 import org.json.JSONArray
 import java.util.Calendar
+import java.util.TimeZone
 
-object ScheduleAlarmManager {
+object ScheduleWorkManager {
 
     fun rescheduleAll(context: Context, userId: String) {
         val prefs = context.getSharedPreferences("schedule_data", Context.MODE_PRIVATE)
-        val raw = prefs.getString("schedules_$userId", "[]") ?: "[]"
+        val raw   = prefs.getString("schedules_$userId", "[]") ?: "[]"
         val array = try { JSONArray(raw) } catch (e: Exception) { JSONArray() }
 
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -23,13 +24,14 @@ object ScheduleAlarmManager {
         }
 
         for (i in 0 until array.length()) {
-            val obj      = array.getJSONObject(i)
-            val isActive = obj.optBoolean("is_active", true)
+            val obj        = array.getJSONObject(i)
+            val isActive   = obj.optBoolean("is_active", true)
             if (!isActive) continue
 
-            val name  = obj.getString("name")
-            val start = obj.getString("start")
-            val end   = obj.getString("end")
+            val name       = obj.getString("name")
+            val start      = obj.getString("start")
+            val end        = obj.getString("end")
+            val firebaseId = obj.optString("firebase_key", "")
 
             val pumpKey = when (name) {
                 "Nutrition Pump A" -> "pompa_nutritionA"
@@ -37,36 +39,49 @@ object ScheduleAlarmManager {
                 else -> continue
             }
 
-            setAlarm(context, alarmManager, requestCode = i * 2,
-                timeStr = start, pumpKey = pumpKey, turnOn = true)
+            setAlarmClock(
+                context, alarmManager,
+                requestCode = i * 2,
+                timeStr = start,
+                pumpKey = pumpKey,
+                turnOn = true,
+                firebaseId = firebaseId
+            )
 
-            setAlarm(context, alarmManager, requestCode = i * 2 + 1,
-                timeStr = end, pumpKey = pumpKey, turnOn = false)
+            setAlarmClock(
+                context, alarmManager,
+                requestCode = i * 2 + 1,
+                timeStr = end,
+                pumpKey = pumpKey,
+                turnOn = false,
+                firebaseId = firebaseId
+            )
 
-            Log.d("ScheduleAlarm", "Set alarm $name | ON=$start OFF=$end")
+            Log.d("ScheduleWorkManager", "Alarm set: $name ON=$start OFF=$end firebaseId=$firebaseId")
         }
     }
 
-    private fun setAlarm(
+    private fun setAlarmClock(
         context: Context,
         alarmManager: AlarmManager,
         requestCode: Int,
         timeStr: String,
         pumpKey: String,
-        turnOn: Boolean
+        turnOn: Boolean,
+        firebaseId: String
     ) {
-        val parts = timeStr.split(":")
+        val parts = timeStr.trim().split(":")
         if (parts.size < 2) return
 
         val hour   = parts[0].toIntOrNull() ?: return
         val minute = parts[1].toIntOrNull() ?: return
+        val second = if (parts.size >= 3) parts[2].toIntOrNull() ?: 0 else 0
 
-        val cal = Calendar.getInstance().apply {
+        val cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Jakarta")).apply {
             set(Calendar.HOUR_OF_DAY, hour)
             set(Calendar.MINUTE, minute)
-            set(Calendar.SECOND, 0)
+            set(Calendar.SECOND, second)
             set(Calendar.MILLISECOND, 0)
-
             if (timeInMillis <= System.currentTimeMillis()) {
                 add(Calendar.DAY_OF_YEAR, 1)
             }
@@ -75,6 +90,7 @@ object ScheduleAlarmManager {
         val intent = Intent(context, PumpAlarmReceiver::class.java).apply {
             putExtra("pump_key", pumpKey)
             putExtra("turn_on", turnOn)
+            putExtra("firebase_id", firebaseId)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
@@ -82,24 +98,19 @@ object ScheduleAlarmManager {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        try {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                cal.timeInMillis,
-                pendingIntent
-            )
-            Log.d("ScheduleAlarm", "Alarm set: $pumpKey turnOn=$turnOn at $timeStr (${cal.timeInMillis})")
-        } catch (e: SecurityException) {
-            Log.e("ScheduleAlarm", "No permission for exact alarm: ${e.message}")
-        }
+        val alarmClockInfo = AlarmManager.AlarmClockInfo(cal.timeInMillis, pendingIntent)
+        alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
+
+        Log.d("ScheduleWorkManager", "AlarmClock set: $pumpKey turnOn=$turnOn at $timeStr (next: ${cal.time})")
     }
 
     private fun cancelAlarm(context: Context, alarmManager: AlarmManager, requestCode: Int) {
         val intent = Intent(context, PumpAlarmReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(
+        val pi = PendingIntent.getBroadcast(
             context, requestCode, intent,
             PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         ) ?: return
-        alarmManager.cancel(pendingIntent)
+        alarmManager.cancel(pi)
+        pi.cancel()
     }
 }

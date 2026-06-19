@@ -1,7 +1,6 @@
 package com.example.smarthydroponic.pump
 
 import android.app.Dialog
-import android.app.TimePickerDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.NumberPicker
 import android.widget.Spinner
 import android.widget.Switch
 import android.widget.TextView
@@ -55,11 +55,11 @@ class PumpScheduleActivity : AppCompatActivity() {
         val email = userPrefs.getString("EMAIL", "") ?: ""
         currentUserId = if (email.isNotEmpty()) email else "default"
 
-        Log.d("FB_SCHEDULE", "User: $currentUserId | Firebase path: schedule")
+        Log.d("FB_SCHEDULE", "User: $currentUserId")
 
         loadSchedules()
-
-        ScheduleAlarmManager.rescheduleAll(this, currentUserId)
+        ScheduleWorkManager.rescheduleAll(this, currentUserId)
+        requestIgnoreBatteryOptimization()
 
         findViewById<ImageView>(R.id.btnBack).setOnClickListener { finish() }
         findViewById<MaterialButton>(R.id.btnAdd).setOnClickListener { showAddScheduleDialog() }
@@ -70,8 +70,55 @@ class PumpScheduleActivity : AppCompatActivity() {
         containerSchedule.removeAllViews()
         loadSchedules()
     }
+    private fun requestIgnoreBatteryOptimization() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            val pm = getSystemService(android.content.Context.POWER_SERVICE) as android.os.PowerManager
+            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                val intent = android.content.Intent(
+                    android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                ).apply {
+                    data = android.net.Uri.parse("package:$packageName")
+                }
+                startActivity(intent)
+            }
+        }
+    }
 
-    private fun scheduleKey() = "schedules_$currentUserId"
+    private fun pickTime(tv: TextView) {
+        val existing = tv.text.toString()
+        val parts    = existing.split(":").map { it.toIntOrNull() ?: 0 }
+        val initH    = if (parts.size > 0) parts[0] else Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        val initM    = if (parts.size > 1) parts[1] else Calendar.getInstance().get(Calendar.MINUTE)
+        val initS    = if (parts.size > 2) parts[2] else 0
+
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_time_picker, null)
+
+        val pickerHour   = dialogView.findViewById<NumberPicker>(R.id.pickerHour)
+        val pickerMinute = dialogView.findViewById<NumberPicker>(R.id.pickerMinute)
+        val pickerSecond = dialogView.findViewById<NumberPicker>(R.id.pickerSecond)
+
+        pickerHour.minValue   = 0; pickerHour.maxValue   = 23
+        pickerMinute.minValue = 0; pickerMinute.maxValue = 59
+        pickerSecond.minValue = 0; pickerSecond.maxValue = 59
+
+        pickerHour.displayedValues   = (0..23).map { String.format("%02d", it) }.toTypedArray()
+        pickerMinute.displayedValues = (0..59).map { String.format("%02d", it) }.toTypedArray()
+        pickerSecond.displayedValues = (0..59).map { String.format("%02d", it) }.toTypedArray()
+
+        pickerHour.value   = initH
+        pickerMinute.value = initM
+        pickerSecond.value = initS
+
+        AlertDialog.Builder(this)
+            .setTitle("Pilih Waktu")
+            .setView(dialogView)
+            .setPositiveButton("OK") { _, _ ->
+                tv.text = String.format("%02d:%02d:%02d",
+                    pickerHour.value, pickerMinute.value, pickerSecond.value)
+            }
+            .setNegativeButton("Batal", null)
+            .show()
+    }
 
     private fun nowIso(): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
@@ -87,27 +134,19 @@ class PumpScheduleActivity : AppCompatActivity() {
             "is_active"  to isActive,
             "created_at" to nowIso()
         )
-        Log.d("FB_SCHEDULE", "Push: schedule/$firebaseKey | is_active=$isActive")
         dbRef.child(firebaseKey).setValue(data)
-            .addOnSuccessListener { Log.d("FB_SCHEDULE", "Berhasil disimpan: schedule/$firebaseKey") }
-            .addOnFailureListener { e -> Log.e("FB_SCHEDULE", "Gagal simpan: ${e.message}") }
+            .addOnSuccessListener { Log.d("FB_SCHEDULE", "Saved: $firebaseKey") }
+            .addOnFailureListener { e -> Log.e("FB_SCHEDULE", "Gagal: ${e.message}") }
     }
 
     private fun updateActiveFirebase(firebaseKey: String, isActive: Boolean) {
         if (firebaseKey.isEmpty()) return
         dbRef.child(firebaseKey).child("is_active").setValue(isActive)
-            .addOnSuccessListener { Log.d("FB_SCHEDULE", "is_active updated: $firebaseKey = $isActive") }
-            .addOnFailureListener { e -> Log.e("FB_SCHEDULE", "Gagal update is_active: ${e.message}") }
     }
 
     private fun deleteFromFirebase(firebaseKey: String) {
-        if (firebaseKey.isEmpty()) {
-            Log.w("FB_SCHEDULE", "firebaseKey kosong, skip delete Firebase")
-            return
-        }
+        if (firebaseKey.isEmpty()) return
         dbRef.child(firebaseKey).removeValue()
-            .addOnSuccessListener { Log.d("FB_SCHEDULE", "Berhasil dihapus: schedule/$firebaseKey") }
-            .addOnFailureListener { e -> Log.e("FB_SCHEDULE", "Gagal hapus: ${e.message}") }
     }
 
     private fun showAddScheduleDialog() {
@@ -125,8 +164,9 @@ class PumpScheduleActivity : AppCompatActivity() {
         val btnCancel = dialog.findViewById<MaterialButton>(R.id.btnCancel)
         val btnSave   = dialog.findViewById<MaterialButton>(R.id.btnSave)
 
-        val items = listOf("Nutrition Pump A", "Nutrition Pump B")
-        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, items)
+        spinner.adapter = ArrayAdapter(this,
+            android.R.layout.simple_spinner_dropdown_item,
+            listOf("Nutrition Pump A", "Nutrition Pump B"))
 
         tvStart.setOnClickListener { pickTime(tvStart) }
         tvEnd.setOnClickListener   { pickTime(tvEnd)   }
@@ -138,12 +178,11 @@ class PumpScheduleActivity : AppCompatActivity() {
             val end   = tvEnd.text.toString()
 
             if (start.length < 5 || end.length < 5) {
-                Toast.makeText(this, "Please select a time first!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Pilih waktu terlebih dahulu!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val firebaseKey = dbRef.push().key
-            if (firebaseKey == null) {
+            val firebaseKey = dbRef.push().key ?: run {
                 Toast.makeText(this, "Gagal: tidak ada koneksi Firebase", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -152,10 +191,9 @@ class PumpScheduleActivity : AppCompatActivity() {
             addScheduleCard(index, name, start, end, firebaseKey, isActive = true)
             saveSchedule(index, name, start, end, firebaseKey, isActive = true)
             pushToFirebase(name, start, end, firebaseKey, isActive = true)
+            ScheduleWorkManager.rescheduleAll(this, currentUserId)
 
-            ScheduleAlarmManager.rescheduleAll(this, currentUserId)
-
-            Toast.makeText(this, "$name : $start - $end saved!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "$name : $start - $end disimpan!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
 
@@ -163,11 +201,8 @@ class PumpScheduleActivity : AppCompatActivity() {
     }
 
     private fun showEditScheduleDialog(
-        index: Int,
-        currentName: String,
-        currentStart: String,
-        currentEnd: String,
-        firebaseKey: String
+        index: Int, currentName: String,
+        currentStart: String, currentEnd: String, firebaseKey: String
     ) {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_add_schedule)
@@ -177,20 +212,17 @@ class PumpScheduleActivity : AppCompatActivity() {
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
+        val items     = listOf("Nutrition Pump A", "Nutrition Pump B")
         val spinner   = dialog.findViewById<Spinner>(R.id.spinnerName)
         val tvStart   = dialog.findViewById<TextView>(R.id.tvStartTime)
         val tvEnd     = dialog.findViewById<TextView>(R.id.tvEndTime)
         val btnCancel = dialog.findViewById<MaterialButton>(R.id.btnCancel)
         val btnSave   = dialog.findViewById<MaterialButton>(R.id.btnSave)
 
-        val items = listOf("Nutrition Pump A", "Nutrition Pump B")
         spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, items)
-
-        val nameIndex = items.indexOf(currentName).takeIf { it >= 0 } ?: 0
-        spinner.setSelection(nameIndex)
+        spinner.setSelection(items.indexOf(currentName).takeIf { it >= 0 } ?: 0)
         tvStart.text = currentStart
         tvEnd.text   = currentEnd
-
         btnSave.text   = "Update"
         btnCancel.text = "Delete"
 
@@ -208,20 +240,17 @@ class PumpScheduleActivity : AppCompatActivity() {
             val end   = tvEnd.text.toString()
 
             if (start.length < 5 || end.length < 5) {
-                Toast.makeText(this, "Please select a time first!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Pilih waktu terlebih dahulu!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             val currentActive = getIsActive(index)
             updateSchedule(index, name, start, end, firebaseKey, currentActive)
             pushToFirebase(name, start, end, firebaseKey, currentActive)
+            ScheduleWorkManager.rescheduleAll(this, currentUserId)
 
-            // Restart worker agar perubahan jadwal langsung aktif
-            ScheduleAlarmManager.rescheduleAll(this, currentUserId)
-
-            Toast.makeText(this, "Schedule updated!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Jadwal diperbarui!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
-
             containerSchedule.removeAllViews()
             loadSchedules()
         }
@@ -231,36 +260,23 @@ class PumpScheduleActivity : AppCompatActivity() {
 
     private fun showDeleteConfirmation(index: Int, firebaseKey: String) {
         AlertDialog.Builder(this)
-            .setTitle("Delete Schedule")
-            .setMessage("Are you sure you want to delete this schedule?")
-            .setPositiveButton("Delete") { _, _ ->
+            .setTitle("Hapus Jadwal")
+            .setMessage("Yakin ingin menghapus jadwal ini?")
+            .setPositiveButton("Hapus") { _, _ ->
                 deleteSchedule(index)
                 deleteFromFirebase(firebaseKey)
                 containerSchedule.removeAllViews()
                 loadSchedules()
-
-                // Restart worker agar jadwal yang dihapus tidak aktif lagi
-                ScheduleAlarmManager.rescheduleAll(this, currentUserId)
-
-                Toast.makeText(this, "Schedule deleted.", Toast.LENGTH_SHORT).show()
+                ScheduleWorkManager.rescheduleAll(this, currentUserId)
+                Toast.makeText(this, "Jadwal dihapus.", Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton("Batal", null)
             .show()
     }
 
-    private fun pickTime(tv: TextView) {
-        val cal = Calendar.getInstance()
-        TimePickerDialog(this, { _, hour, minute ->
-            tv.text = String.format("%02d:%02d", hour, minute)
-        }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
-    }
     private fun addScheduleCard(
-        index: Int,
-        name: String,
-        start: String,
-        end: String,
-        firebaseKey: String,
-        isActive: Boolean
+        index: Int, name: String, start: String,
+        end: String, firebaseKey: String, isActive: Boolean
     ) {
         val view = LayoutInflater.from(this).inflate(R.layout.item_add, containerSchedule, false)
 
@@ -275,9 +291,8 @@ class PumpScheduleActivity : AppCompatActivity() {
         switchItem.setOnCheckedChangeListener { _, checked ->
             updateIsActive(index, checked)
             updateActiveFirebase(firebaseKey, checked)
-            ScheduleAlarmManager.rescheduleAll(this, currentUserId)
-            val status = if (checked) "aktif" else "nonaktif"
-            Toast.makeText(this, "$name $status", Toast.LENGTH_SHORT).show()
+            ScheduleWorkManager.rescheduleAll(this, currentUserId)
+            Toast.makeText(this, "$name ${if (checked) "aktif" else "nonaktif"}", Toast.LENGTH_SHORT).show()
         }
 
         view.setOnClickListener {
@@ -287,9 +302,11 @@ class PumpScheduleActivity : AppCompatActivity() {
         containerSchedule.addView(view)
     }
 
+    private fun scheduleKey() = "schedules_$currentUserId"
+
     private fun getJsonArray(): JSONArray {
-        val prefs = getSharedPreferences("schedule_data", MODE_PRIVATE)
-        val raw = prefs.getString(scheduleKey(), "[]") ?: "[]"
+        val raw = getSharedPreferences("schedule_data", MODE_PRIVATE)
+            .getString(scheduleKey(), "[]") ?: "[]"
         return try { JSONArray(raw) } catch (e: Exception) { JSONArray() }
     }
 
@@ -298,7 +315,7 @@ class PumpScheduleActivity : AppCompatActivity() {
             .edit().putString(scheduleKey(), array.toString()).apply()
     }
 
-    private fun getScheduleCount(): Int = getJsonArray().length()
+    private fun getScheduleCount() = getJsonArray().length()
 
     private fun getIsActive(index: Int): Boolean {
         val array = getJsonArray()
@@ -309,11 +326,8 @@ class PumpScheduleActivity : AppCompatActivity() {
     private fun saveSchedule(index: Int, name: String, start: String, end: String, firebaseKey: String, isActive: Boolean) {
         val array = getJsonArray()
         val obj = JSONObject().apply {
-            put("name",         name)
-            put("start",        start)
-            put("end",          end)
-            put("firebase_key", firebaseKey)
-            put("is_active",    isActive)
+            put("name", name); put("start", start); put("end", end)
+            put("firebase_key", firebaseKey); put("is_active", isActive)
         }
         if (index >= array.length()) array.put(obj) else array.put(index, obj)
         saveJsonArray(array)
@@ -323,11 +337,8 @@ class PumpScheduleActivity : AppCompatActivity() {
         val array = getJsonArray()
         if (index < array.length()) {
             array.put(index, JSONObject().apply {
-                put("name",         name)
-                put("start",        start)
-                put("end",          end)
-                put("firebase_key", firebaseKey)
-                put("is_active",    isActive)
+                put("name", name); put("start", start); put("end", end)
+                put("firebase_key", firebaseKey); put("is_active", isActive)
             })
             saveJsonArray(array)
         }
@@ -336,9 +347,8 @@ class PumpScheduleActivity : AppCompatActivity() {
     private fun updateIsActive(index: Int, isActive: Boolean) {
         val array = getJsonArray()
         if (index < array.length()) {
-            val obj = array.getJSONObject(index)
-            obj.put("is_active", isActive)
-            array.put(index, obj)
+            array.getJSONObject(index).put("is_active", isActive)
+            array.put(index, array.getJSONObject(index))
             saveJsonArray(array)
         }
     }
@@ -346,25 +356,18 @@ class PumpScheduleActivity : AppCompatActivity() {
     private fun deleteSchedule(index: Int) {
         val array  = getJsonArray()
         val newArr = JSONArray()
-        for (i in 0 until array.length()) {
-            if (i != index) newArr.put(array.getJSONObject(i))
-        }
+        for (i in 0 until array.length()) if (i != index) newArr.put(array.getJSONObject(i))
         saveJsonArray(newArr)
     }
 
     private fun loadSchedules() {
         val array = getJsonArray()
-        Log.d("FB_SCHEDULE", "Load schedules: ${array.length()} item(s)")
+        Log.d("FB_SCHEDULE", "Load: ${array.length()} jadwal")
         for (i in 0 until array.length()) {
             val obj = array.getJSONObject(i)
-            addScheduleCard(
-                i,
-                obj.getString("name"),
-                obj.getString("start"),
-                obj.getString("end"),
-                obj.optString("firebase_key", ""),
-                obj.optBoolean("is_active", true)
-            )
+            addScheduleCard(i,
+                obj.getString("name"), obj.getString("start"), obj.getString("end"),
+                obj.optString("firebase_key", ""), obj.optBoolean("is_active", true))
         }
     }
 }
