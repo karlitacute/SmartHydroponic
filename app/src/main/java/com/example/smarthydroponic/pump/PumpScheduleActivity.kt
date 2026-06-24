@@ -70,6 +70,7 @@ class PumpScheduleActivity : AppCompatActivity() {
         containerSchedule.removeAllViews()
         loadSchedules()
     }
+
     private fun requestIgnoreBatteryOptimization() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             val pm = getSystemService(android.content.Context.POWER_SERVICE) as android.os.PowerManager
@@ -110,13 +111,13 @@ class PumpScheduleActivity : AppCompatActivity() {
         pickerSecond.value = initS
 
         AlertDialog.Builder(this)
-            .setTitle("Pilih Waktu")
+            .setTitle("Select Time")
             .setView(dialogView)
             .setPositiveButton("OK") { _, _ ->
                 tv.text = String.format("%02d:%02d:%02d",
                     pickerHour.value, pickerMinute.value, pickerSecond.value)
             }
-            .setNegativeButton("Batal", null)
+            .setNegativeButton("Cancel", null)
             .show()
     }
 
@@ -136,7 +137,7 @@ class PumpScheduleActivity : AppCompatActivity() {
         )
         dbRef.child(firebaseKey).setValue(data)
             .addOnSuccessListener { Log.d("FB_SCHEDULE", "Saved: $firebaseKey") }
-            .addOnFailureListener { e -> Log.e("FB_SCHEDULE", "Gagal: ${e.message}") }
+            .addOnFailureListener { e -> Log.e("FB_SCHEDULE", "Failed: ${e.message}") }
     }
 
     private fun updateActiveFirebase(firebaseKey: String, isActive: Boolean) {
@@ -178,12 +179,12 @@ class PumpScheduleActivity : AppCompatActivity() {
             val end   = tvEnd.text.toString()
 
             if (start.length < 5 || end.length < 5) {
-                Toast.makeText(this, "Pilih waktu terlebih dahulu!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please select a time first!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             val firebaseKey = dbRef.push().key ?: run {
-                Toast.makeText(this, "Gagal: tidak ada koneksi Firebase", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Failed: no Firebase connection", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -193,7 +194,7 @@ class PumpScheduleActivity : AppCompatActivity() {
             pushToFirebase(name, start, end, firebaseKey, isActive = true)
             ScheduleWorkManager.rescheduleAll(this, currentUserId)
 
-            Toast.makeText(this, "$name : $start - $end disimpan!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "$name : $start - $end saved!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
 
@@ -240,7 +241,7 @@ class PumpScheduleActivity : AppCompatActivity() {
             val end   = tvEnd.text.toString()
 
             if (start.length < 5 || end.length < 5) {
-                Toast.makeText(this, "Pilih waktu terlebih dahulu!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please select a time first!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -249,7 +250,7 @@ class PumpScheduleActivity : AppCompatActivity() {
             pushToFirebase(name, start, end, firebaseKey, currentActive)
             ScheduleWorkManager.rescheduleAll(this, currentUserId)
 
-            Toast.makeText(this, "Jadwal diperbarui!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Schedule updated!", Toast.LENGTH_SHORT).show()
             dialog.dismiss()
             containerSchedule.removeAllViews()
             loadSchedules()
@@ -260,17 +261,17 @@ class PumpScheduleActivity : AppCompatActivity() {
 
     private fun showDeleteConfirmation(index: Int, firebaseKey: String) {
         AlertDialog.Builder(this)
-            .setTitle("Hapus Jadwal")
-            .setMessage("Yakin ingin menghapus jadwal ini?")
-            .setPositiveButton("Hapus") { _, _ ->
+            .setTitle("Delete Schedule")
+            .setMessage("Are you sure you want to delete this schedule?")
+            .setPositiveButton("Delete") { _, _ ->
                 deleteSchedule(index)
                 deleteFromFirebase(firebaseKey)
                 containerSchedule.removeAllViews()
                 loadSchedules()
                 ScheduleWorkManager.rescheduleAll(this, currentUserId)
-                Toast.makeText(this, "Jadwal dihapus.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Schedule deleted.", Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Batal", null)
+            .setNegativeButton("Cancel", null)
             .show()
     }
 
@@ -292,7 +293,7 @@ class PumpScheduleActivity : AppCompatActivity() {
             updateIsActive(index, checked)
             updateActiveFirebase(firebaseKey, checked)
             ScheduleWorkManager.rescheduleAll(this, currentUserId)
-            Toast.makeText(this, "$name ${if (checked) "aktif" else "nonaktif"}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "$name ${if (checked) "active" else "inactive"}", Toast.LENGTH_SHORT).show()
         }
 
         view.setOnClickListener {
@@ -362,7 +363,7 @@ class PumpScheduleActivity : AppCompatActivity() {
 
     private fun loadSchedules() {
         val array = getJsonArray()
-        Log.d("FB_SCHEDULE", "Load: ${array.length()} jadwal")
+        Log.d("FB_SCHEDULE", "Load: ${array.length()} schedules")
         for (i in 0 until array.length()) {
             val obj = array.getJSONObject(i)
             addScheduleCard(i,
