@@ -9,10 +9,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.example.smarthydroponic.R
+import com.example.smarthydroponic.home.HomeFragment
 import com.example.smarthydroponic.profile.ProfileActivity
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Description
@@ -64,8 +66,8 @@ class ChartFragment : Fragment() {
     private var listenerTDS: ValueEventListener? = null
     private var listenerUV:  ValueEventListener? = null
 
-    private val dateFormat = SimpleDateFormat("d MMM yyyy HH:mm", Locale("id", "ID"))
-    private val timeFormat = SimpleDateFormat("HH:mm", Locale("id", "ID"))
+    private val dateFormat = SimpleDateFormat("d MMM yyyy HH:mm", Locale.forLanguageTag("id-ID"))
+    private val timeFormat = SimpleDateFormat("HH:mm", Locale.forLanguageTag("id-ID"))
 
     private val phMin  = 6.0f;  private val phMax  = 7.0f
     private val tdsMin = 560f;  private val tdsMax = 840f
@@ -89,6 +91,7 @@ class ChartFragment : Fragment() {
         initViews()
         setupChart()
         setupFirebaseListeners()
+        setupBackPress()
 
         selectedType = "PH"
         updateChartTitle()
@@ -96,6 +99,19 @@ class ChartFragment : Fragment() {
         setupClickListeners()
 
         return rootView
+    }
+
+    private fun setupBackPress() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.frame_container, HomeFragment())
+                        .commit()
+                }
+            }
+        )
     }
 
     override fun onDestroyView() {
@@ -142,7 +158,7 @@ class ChartFragment : Fragment() {
                 dataPH.add(Pair(now, value))
                 if (dataPH.size > 2000) dataPH.removeFirst()
 
-                tvHistPH.text     = String.Companion.format(Locale.US, "%.2f", value)
+                tvHistPH.text     = String.format(Locale.US, "%.2f", value)
                 tvHistPHTime.text = dateFormat.format(Date(now))
 
                 if (selectedType == "PH") {
@@ -162,7 +178,7 @@ class ChartFragment : Fragment() {
                 dataTDS.add(Pair(now, value))
                 if (dataTDS.size > 2000) dataTDS.removeFirst()
 
-                tvHistTDS.text     = String.Companion.format(Locale.US, "%.0f ppm", value)
+                tvHistTDS.text     = String.format(Locale.US, "%.0f ppm", value)
                 tvHistTDSTime.text = dateFormat.format(Date(now))
 
                 if (selectedType == "TDS") {
@@ -182,7 +198,7 @@ class ChartFragment : Fragment() {
                 dataUV.add(Pair(now, value))
                 if (dataUV.size > 2000) dataUV.removeFirst()
 
-                tvHistUV.text     = String.Companion.format(Locale.US, "%.2f", value)
+                tvHistUV.text     = String.format(Locale.US, "%.2f", value)
                 tvHistUVTime.text = dateFormat.format(Date(now))
 
                 if (selectedType == "UV") {
@@ -304,7 +320,6 @@ class ChartFragment : Fragment() {
         tvMax.setTextColor(getStatusColor(maxVal))
     }
 
-    // Hijau = ideal, Merah = di luar rentang ideal pakcoy
     private fun getStatusColor(value: Float): Int {
         val isIdeal = when (selectedType) {
             "PH"  -> value in phMin..phMax
@@ -328,9 +343,9 @@ class ChartFragment : Fragment() {
     }
 
     private fun formatValue(v: Float) = when (selectedType) {
-        "TDS" -> String.Companion.format(Locale.US, "%.0f", v)
-        "PH"  -> String.Companion.format(Locale.US, "%.2f", v)
-        else  -> String.Companion.format(Locale.US, "%.2f", v)
+        "TDS" -> String.format(Locale.US, "%.0f", v)
+        "PH"  -> String.format(Locale.US, "%.2f", v)
+        else  -> String.format(Locale.US, "%.2f", v)
     }
 
     private fun updateChartTitle() {

@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -52,6 +53,8 @@ class HomeFragment : Fragment() {
             insets
         }
 
+        setupBackPress()
+
         val imgProfile   = view.findViewById<ImageView>(R.id.imgProfile)
         val imgWifi      = view.findViewById<ImageView>(R.id.imgWifi)
         val tvSystemDesc = view.findViewById<TextView>(R.id.tvSystemDesc)
@@ -61,17 +64,17 @@ class HomeFragment : Fragment() {
         val tvTDS = view.findViewById<TextView>(R.id.tvTDS)
         val tvUV  = view.findViewById<TextView>(R.id.tvUV)
 
-        val tvNutritionAStatus = view.findViewById<TextView>(R.id.tvNutritionAStatus)
+        val tvNutritionAStatus   = view.findViewById<TextView>(R.id.tvNutritionAStatus)
         val switchPumpNutritionA = view.findViewById<Switch>(R.id.switchPumpNutritionA)
 
-        val tvNutritionBStatus = view.findViewById<TextView>(R.id.tvNutritionBStatus)
+        val tvNutritionBStatus   = view.findViewById<TextView>(R.id.tvNutritionBStatus)
         val switchPumpNutritionB = view.findViewById<Switch>(R.id.switchPumpNutritionB)
 
-        val tvSensor   = view.findViewById<TextView>(R.id.tvSensor)
+        val tvSensor      = view.findViewById<TextView>(R.id.tvSensor)
         val tvNutritionA  = view.findViewById<TextView>(R.id.tvNutritionA)
         val tvNutritionB  = view.findViewById<TextView>(R.id.tvNutritionB)
-        val tvInternet = view.findViewById<TextView>(R.id.tvInternetStatus)
-        val tvWifiTop  = view.findViewById<TextView>(R.id.tvStatusAtas)
+        val tvInternet    = view.findViewById<TextView>(R.id.tvInternetStatus)
+        val tvWifiTop     = view.findViewById<TextView>(R.id.tvStatusAtas)
 
         imgProfile.setOnClickListener {
             startActivity(Intent(requireContext(), ProfileActivity::class.java))
@@ -185,6 +188,16 @@ class HomeFragment : Fragment() {
         database.child("sensors/uv").addValueEventListener(uvListener!!)
 
         return view
+    }
+
+    private fun setupBackPress() {
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                }
+            }
+        )
     }
 
     private fun parsePumpValue(raw: Any?): Boolean = when (raw) {
